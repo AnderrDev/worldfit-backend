@@ -7,12 +7,25 @@ async function bootstrap(): Promise<void> {
     await connectDatabase();
     const app = buildApp();
     app.listen(env.port, () => {
+      const base = `http://localhost:${env.port}`;
       // eslint-disable-next-line no-console
-      console.log(`[server] WorldFit backend listening on :${env.port} (${env.nodeEnv})`);
+      console.log(
+        [
+          '',
+          '  ✅  WorldFit backend iniciado correctamente',
+          `  ├─ Entorno   : ${env.nodeEnv}`,
+          `  ├─ Version   : ${env.apiVersion}`,
+          '  ├─ MongoDB   : conectado a Atlas',
+          `  ├─ API       : ${base}${env.apiBasePath}`,
+          `  ├─ Health    : ${base}${env.apiPrefix}/health`,
+          `  └─ Swagger   : ${base}${env.apiPrefix}/docs`,
+          ''
+        ].join('\n')
+      );
     });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('[server] failed to start', err);
+    console.error('  ❌  WorldFit backend NO pudo iniciar:\n', err);
     process.exit(1);
   }
 }
