@@ -93,6 +93,38 @@ Si no quieres usar la nube y tienes Docker: `docker run -d -p 27017:27017 --name
 
 ---
 
+## Migraciones de base de datos (migrate-mongo)
+
+Aunque MongoDB no tiene un esquema rigido, controlamos los cambios de base de
+datos con **[migrate-mongo](https://github.com/seppevs/migrate-mongo)**:
+indices, seeds (datos semilla) y transformaciones de datos quedan versionados y
+se aplican igual por todo el equipo.
+
+- Las migraciones viven en **`migrations/`** (en TypeScript) y se versionan en git.
+- migrate-mongo registra las aplicadas en la coleccion **`changelog`** de la BD,
+  asi cada quien aplica solo lo pendiente y en orden.
+- Usa la misma `MONGO_URI` del `.env` (config en `migrate-mongo-config.js`).
+- Buena practica: las migraciones usan el driver nativo de Mongo, **no** los
+  modelos de Mongoose (para no acoplarlas a modelos que cambian).
+- En produccion el `autoIndex` de Mongoose esta desactivado: los indices se
+  crean por migracion, no automaticamente al arrancar.
+
+**Comandos:**
+```bash
+npm run migrate:status                 # ver que esta aplicado / pendiente
+npm run migrate:up                     # aplicar las pendientes
+npm run migrate:down                   # revertir la ultima
+npm run migrate:create -- nombre-cambio   # crear una migracion nueva
+```
+
+**Flujo al clonar / tras un pull con migraciones nuevas:** corre `npm run migrate:up`
+una vez (con el backend apuntando a tu BD) y listo.
+
+> La primera migracion (`*-initial-indexes-and-seed.ts`) crea el indice unico de
+> `email` y siembra un catalogo base de ejercicios.
+
+---
+
 ## SonarCloud
 
 `sonar-project.properties` listo. Edita los placeholders:
