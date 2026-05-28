@@ -56,7 +56,7 @@ Necesitas una base de datos MongoDB. La forma mas sencilla (gratis, sin instalar
 
 ---
 
-## Base de datos: MongoDB Atlas (gratis, recomendado)
+## Base de datos: MongoDB Atlas (gratis)
 
 El codigo de conexion ya esta hecho (`src/config/database.ts` usa Mongoose y se conecta solo al arrancar). Lo unico que necesitas es crear una base en la nube y pegar su "connection string" en tu `.env`. **No instalas nada en tu computadora.**
 
