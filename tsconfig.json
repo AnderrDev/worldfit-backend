@@ -5,6 +5,7 @@
     "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./",
+    "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {
       "@modules/*": ["src/modules/*"],
