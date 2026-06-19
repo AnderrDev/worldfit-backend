@@ -1,6 +1,7 @@
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../config/database';
 import { Routine as RoutineEntity } from '../entities/Routine';
+import { Exercise as ExerciseEntity } from '../entities/Exercise';
 import { Routine as RoutineDomain, Difficulty } from '../../domain/entities/routine';
 import { RoutinePort } from '../../domain/routine.port';
 
@@ -17,11 +18,21 @@ export class RoutineAdapter implements RoutinePort {
       name: routine.name_routine,
       description: routine.description,
       difficulty: routine.difficulty as Difficulty,
-      // simple-array guarda como texto; lo volvemos a numeros.
-      exerciseIds: (routine.exercise_ids ?? []).map((value) => Number(value)),
+      // De la relacion N:M extraemos solo los ids hacia el dominio.
+      exerciseIds: (routine.exercises ?? []).map((e) => e.id_exercise),
       ownerId: routine.owner_id,
       status: routine.status_routine,
     };
+  }
+
+  // Convierte una lista de ids en referencias de entidad Exercise (solo el id),
+  // suficiente para que TypeORM cree las filas de la tabla intermedia.
+  private toExerciseRefs(ids: number[]): ExerciseEntity[] {
+    return (ids ?? []).map((id) => {
+      const ref = new ExerciseEntity();
+      ref.id_exercise = id;
+      return ref;
+    });
   }
 
   private toEntity(routine: Omit<RoutineDomain, 'id'>): RoutineEntity {
@@ -29,7 +40,7 @@ export class RoutineAdapter implements RoutinePort {
     entity.name_routine = routine.name;
     entity.description = routine.description;
     entity.difficulty = routine.difficulty;
-    entity.exercise_ids = routine.exerciseIds;
+    entity.exercises = this.toExerciseRefs(routine.exerciseIds);
     entity.owner_id = routine.ownerId;
     entity.status_routine = routine.status ?? 1;
     return entity;
@@ -53,7 +64,7 @@ export class RoutineAdapter implements RoutinePort {
       if (routine.name != null) existing.name_routine = routine.name;
       if (routine.description != null) existing.description = routine.description;
       if (routine.difficulty != null) existing.difficulty = routine.difficulty;
-      if (routine.exerciseIds != null) existing.exercise_ids = routine.exerciseIds;
+      if (routine.exerciseIds != null) existing.exercises = this.toExerciseRefs(routine.exerciseIds);
       if (routine.ownerId != null) existing.owner_id = routine.ownerId;
       if (routine.status != null) existing.status_routine = routine.status;
 

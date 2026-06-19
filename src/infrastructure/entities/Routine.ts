@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Exercise } from './Exercise';
 
 @Entity('routine')
 export class Routine {
@@ -14,9 +21,16 @@ export class Routine {
   @Column({ type: 'varchar', length: 50 })
   difficulty!: string;
 
-  // Lista de ids de ejercicios guardada como texto separado por comas.
-  @Column({ type: 'simple-array' })
-  exercise_ids!: number[];
+  // Relacion N:M con ejercicios. TypeORM crea la tabla intermedia
+  // routine_exercise (routine_id, exercise_id). eager: carga los
+  // ejercicios automaticamente al consultar la rutina.
+  @ManyToMany(() => Exercise, { eager: true })
+  @JoinTable({
+    name: 'routine_exercise',
+    joinColumn: { name: 'routine_id', referencedColumnName: 'id_routine' },
+    inverseJoinColumn: { name: 'exercise_id', referencedColumnName: 'id_exercise' },
+  })
+  exercises!: Exercise[];
 
   @Column({ type: 'integer' })
   owner_id!: number;

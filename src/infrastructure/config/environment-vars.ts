@@ -9,6 +9,7 @@ export type EnvironmentVars = {
   DB_PASSWORD: string;
   DB_NAME: string;
   DB_SCHEMA: string;
+  JWT_SECRET: string;
 };
 
 type ValidationEnvironmentVars = {
@@ -25,6 +26,7 @@ function validateEnvVars(vars: NodeJS.ProcessEnv): ValidationEnvironmentVars {
     DB_PASSWORD: Joi.string().allow('').required(),
     DB_NAME: Joi.string().required(),
     DB_SCHEMA: Joi.string().required(),
+    JWT_SECRET: Joi.string().min(32).required(),
   }).unknown(true);
 
   const { error, value } = schema.validate(vars);
