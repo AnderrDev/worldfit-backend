@@ -103,11 +103,14 @@ npm run dev      # desarrollo (nodemon + tsx, recarga en caliente)
 Con `synchronize: true` (solo en desarrollo) TypeORM crea las tablas a partir de las entidades.
 
 ### 5. Datos de prueba (seed)
-Con la base levantada y las tablas creadas (tras un `npm run dev` o `npm run build`):
+El seed corre **automáticamente al arrancar la app** (`npm run dev`): si la base
+está vacía, inserta los datos de ejemplo; si ya existen, no hace nada (idempotente).
+
+También puede ejecutarse de forma manual:
 ```bash
 npm run seed
 ```
-Inserta datos de ejemplo (es idempotente, no duplica):
+Datos que inserta:
 
 | Cuenta | Email | Contraseña | Rol |
 |---|---|---|---|
