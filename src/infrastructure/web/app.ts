@@ -19,6 +19,11 @@ export class App {
   }
 
   private routes(): void {
+    // Chequeo de estado (publico): util para comprobar que la API responde.
+    this.app.get('/api/health', (_req, res) => {
+      res.status(200).json({ status: 'ok', service: 'worldfit-backend' });
+    });
+
     this.app.use('/api', userRoutes);
     this.app.use('/api', exerciseRoutes);
     this.app.use('/api', routineRoutes);
