@@ -15,6 +15,7 @@ export class ExerciseAdapter implements ExercisePort {
     return {
       id: exercise.id_exercise,
       name: exercise.name_exercise,
+      description: exercise.description,
       muscleGroup: exercise.muscle_group as MuscleGroup,
       sets: exercise.sets,
       reps: exercise.reps,
@@ -25,6 +26,7 @@ export class ExerciseAdapter implements ExercisePort {
   private toEntity(exercise: Omit<ExerciseDomain, 'id'>): ExerciseEntity {
     const entity = new ExerciseEntity();
     entity.name_exercise = exercise.name;
+    entity.description = exercise.description;
     entity.muscle_group = exercise.muscleGroup;
     entity.sets = exercise.sets;
     entity.reps = exercise.reps;
@@ -48,6 +50,7 @@ export class ExerciseAdapter implements ExercisePort {
       if (!existing) return false;
 
       if (exercise.name != null) existing.name_exercise = exercise.name;
+      if (exercise.description != null) existing.description = exercise.description;
       if (exercise.muscleGroup != null) existing.muscle_group = exercise.muscleGroup;
       if (exercise.sets != null) existing.sets = exercise.sets;
       if (exercise.reps != null) existing.reps = exercise.reps;

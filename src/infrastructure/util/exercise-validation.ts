@@ -2,6 +2,7 @@ import Joi from 'joi';
 
 export type ExerciseData = {
   name: string;
+  description: string;
   muscleGroup: string;
   sets: number;
   reps: number;
@@ -18,6 +19,7 @@ const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core', 'fu
 export function validateExerciseData(data: any): ValidationExerciseData {
   const schema = Joi.object({
     name: Joi.string().trim().min(3).required(),
+    description: Joi.string().trim().allow('').max(500).default(''),
     muscleGroup: Joi.string().valid(...MUSCLE_GROUPS).required(),
     sets: Joi.number().integer().min(1).required(),
     reps: Joi.number().integer().min(1).required(),

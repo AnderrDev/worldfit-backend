@@ -28,7 +28,7 @@ export class UserApplication {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error('Credenciales invalidas');
 
-    return AuthApplication.generateToken({ id: user.id, email: user.email });
+    return AuthApplication.generateToken({ id: user.id, email: user.email, role: user.role });
   }
 
   async updateUser(id: number, user: Partial<User>): Promise<boolean> {

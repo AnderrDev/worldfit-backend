@@ -16,7 +16,7 @@ export class UserController {
       if (error) {
         return res.status(400).json({ message: error.message });
       }
-      const userId = await this.app.createUser(value);
+      const userId = await this.app.createUser(value as any);
       return res.status(201).json({ message: 'Usuario creado con exito', userId });
     } catch (error) {
       if (error instanceof Error) {
@@ -87,7 +87,7 @@ export class UserController {
       if (error) {
         return res.status(400).json({ message: error.message });
       }
-      const updated = await this.app.updateUser(id, value);
+      const updated = await this.app.updateUser(id, value as any);
       if (!updated) {
         return res.status(404).json({ message: 'Usuario no encontrado o sin cambios' });
       }

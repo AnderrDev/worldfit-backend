@@ -14,6 +14,9 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password!: string;
 
+  @Column({ type: 'varchar', length: 20, default: 'user' })
+  role_user!: string;
+
   @Column({ type: 'integer', default: 1 })
   status_user!: number;
 }

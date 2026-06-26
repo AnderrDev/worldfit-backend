@@ -7,6 +7,7 @@ export function validateUserUpdate(data: any) {
     name: Joi.string().trim().min(3).pattern(/^[a-zA-ZÀ-ÿ\s]+$/),
     email: Joi.string().email(),
     password: Joi.string().min(6).pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/),
+    role: Joi.string().valid('user', 'admin'),
     status: Joi.number().valid(0, 1),
   })
     .min(1);

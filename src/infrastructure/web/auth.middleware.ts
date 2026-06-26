@@ -18,3 +18,13 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
     res.status(401).json({ message: 'Token invalido o expirado' });
   }
 }
+
+// Debe usarse despues de authenticateToken: exige que el usuario sea admin.
+export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
+  const user = (req as any).user;
+  if (!user || user.role !== 'admin') {
+    res.status(403).json({ message: 'Acceso restringido a administradores' });
+    return;
+  }
+  next();
+}

@@ -8,6 +8,9 @@ export class Exercise {
   @Column({ type: 'varchar', length: 255 })
   name_exercise!: string;
 
+  @Column({ type: 'varchar', length: 500, default: '' })
+  description!: string;
+
   @Column({ type: 'varchar', length: 50 })
   muscle_group!: string;
 

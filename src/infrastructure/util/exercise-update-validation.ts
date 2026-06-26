@@ -6,6 +6,7 @@ const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core', 'fu
 export function validateExerciseUpdate(data: any) {
   const schema = Joi.object({
     name: Joi.string().trim().min(3),
+    description: Joi.string().trim().allow('').max(500),
     muscleGroup: Joi.string().valid(...MUSCLE_GROUPS),
     sets: Joi.number().integer().min(1),
     reps: Joi.number().integer().min(1),

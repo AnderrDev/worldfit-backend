@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../config/database';
 import { User as UserEntity } from '../entities/User';
-import { User as UserDomain } from '../../domain/entities/user';
+import { User as UserDomain, Role } from '../../domain/entities/user';
 import { UserPort } from '../../domain/user.port';
 
 export class UserAdapter implements UserPort {
@@ -18,6 +18,7 @@ export class UserAdapter implements UserPort {
       name: user.name_user,
       email: user.email,
       password: user.password,
+      role: user.role_user as Role,
       status: user.status_user,
     };
   }
@@ -27,6 +28,7 @@ export class UserAdapter implements UserPort {
     entity.name_user = user.name;
     entity.email = user.email;
     entity.password = user.password;
+    entity.role_user = user.role ?? 'user';
     entity.status_user = user.status ?? 1;
     return entity;
   }
@@ -49,6 +51,7 @@ export class UserAdapter implements UserPort {
       if (user.name != null) existing.name_user = user.name;
       if (user.email != null) existing.email = user.email;
       if (user.password != null) existing.password = user.password;
+      if (user.role != null) existing.role_user = user.role;
       if (user.status != null) existing.status_user = user.status;
 
       await this.userRepository.save(existing);

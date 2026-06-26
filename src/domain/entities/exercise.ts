@@ -11,6 +11,7 @@ export type MuscleGroup =
 export interface Exercise {
   id: number;
   name: string;
+  description: string;
   muscleGroup: MuscleGroup;
   sets: number;
   reps: number;

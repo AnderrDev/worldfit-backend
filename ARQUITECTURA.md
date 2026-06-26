@@ -89,7 +89,7 @@ Cada entidad replica el mismo molde canónico:
 ## 3. Detalle por entidad
 
 ### 3.1 Users  ✅ implementado
-- **Campos dominio:** `id, name, email, password, status` (+ **`role`** ← pendiente).
+- **Campos dominio:** `id, name, email, password, role, status`.
 - **Endpoints (`/api`):**
   - `POST /users` (público) — crear
   - `POST /login` (público) — devuelve JWT
@@ -98,7 +98,7 @@ Cada entidad replica el mismo molde canónico:
 - **Reglas:** email único, `bcrypt.hash(password, 12)`, borrado lógico `status = 0`.
 
 ### 3.2 Exercises (catálogo)  ✅ implementado
-- **Campos dominio:** `id, name, muscleGroup, sets, reps, status` (+ **`description`** ← pendiente).
+- **Campos dominio:** `id, name, description, muscleGroup, sets, reps, status`.
 - **Endpoints (`/api`, todos con JWT):**
   - `POST /exercises` · `GET /exercises` · `GET /exercises/:id` · `PUT /exercises/:id` · `DELETE /exercises/:id`
 - **Reglas:** `muscleGroup` validado contra lista fija; borrado lógico.
@@ -129,23 +129,27 @@ Cada entidad replica el mismo molde canónico:
 
 ---
 
-## 5. Pendiente — Fase A (para cerrar las HU del Acta)
+## 5. Fase A — completada ✅
 
-### 5.1 Roles de usuario (HU-06, HU-07)
-- [ ] `domain/entities/user.ts`: añadir `role: 'user' | 'admin'`.
-- [ ] `infrastructure/entities/User.ts`: columna `role_user` (default `'user'`).
-- [ ] `user.adapter.ts`: mapear `role` en `toDomain` / `toEntity`.
-- [ ] `user-validation.ts`: `role` opcional (`valid('user','admin')`, default `'user'`).
-- [ ] `auth.application.ts`: incluir `role` en el payload del token.
-- [ ] `infrastructure/web/auth.middleware.ts`: añadir middleware `requireAdmin`.
-- [ ] `routes/exercise.routes.ts` y `routes/routine.routes.ts`: proteger
-      `POST/PUT/DELETE` con `requireAdmin` (los GET quedan solo con JWT).
+### 5.1 Roles de usuario (HU-06, HU-07)  ✅
+- [x] `domain/entities/user.ts`: `role: 'user' | 'admin'`.
+- [x] `infrastructure/entities/User.ts`: columna `role_user` (default `'user'`).
+- [x] `user.adapter.ts`: mapea `role` en `toDomain` / `toEntity`.
+- [x] `user-validation.ts` / `user-update-validation.ts`: `role` (`valid('user','admin')`).
+- [x] `user.application.ts`: incluye `role` en el payload del token (login).
+- [x] `infrastructure/web/auth.middleware.ts`: middleware `requireAdmin` (403 si no es admin).
+- [x] `routes/exercise.routes.ts` y `routes/routine.routes.ts`: `POST/PUT/DELETE`
+      protegidos con `requireAdmin`; los `GET` quedan solo con JWT.
 
-### 5.2 Descripción de ejercicio (HU-05)
-- [ ] `domain/entities/exercise.ts`: añadir `description: string`.
-- [ ] `infrastructure/entities/Exercise.ts`: columna `description`.
-- [ ] `exercise.adapter.ts`: mapear `description`.
-- [ ] `exercise-validation.ts` / `exercise-update-validation.ts`: validar `description`.
+### 5.2 Descripción de ejercicio (HU-05)  ✅
+- [x] `domain/entities/exercise.ts`: `description: string`.
+- [x] `infrastructure/entities/Exercise.ts`: columna `description`.
+- [x] `exercise.adapter.ts`: mapea `description`.
+- [x] `exercise-validation.ts` / `exercise-update-validation.ts`: validan `description`.
+
+> Resultado: solo los administradores (`role = admin`) pueden crear/editar/eliminar
+> ejercicios y rutinas; los usuarios normales solo consultan. El ejercicio ahora
+> incluye descripción.
 
 ---
 
