@@ -36,7 +36,7 @@ Para reducir riesgo y complejidad, el alcance se acota a:
 | Rutas privadas protegidas (JWT) | HU-08, PB09 | ✅ Hecho | — |
 | Rol administrador vs usuario | HU-06, HU-07 | ❌ Falta | Añadir `role` a User + guard de admin |
 | Ejercicio con descripción | HU-05 | ⚠️ Falta campo | Añadir `description` |
-| Rutina con duración aproximada | HU-03 | ⚠️ Falta campo | Añadir `duration` (minutos) |
+| ~~Rutina con duración aproximada~~ | ~~HU-03~~ | 🚫 Fuera de alcance | HU-03 ajustada: la rutina muestra nombre y descripción (sin duración) |
 | Series/repeticiones por ejercicio | HU-04 | ✅ Global en el ejercicio | Se mantiene global |
 | ~~Seguimiento de progreso~~ | ~~PB06/07/10~~ | 🚫 Fuera de alcance | — |
 | Frontend Angular | HU-03/04/05/09/10 | ❌ No iniciado | Proyecto Angular |
@@ -56,8 +56,10 @@ Para reducir riesgo y complejidad, el alcance se acota a:
 2. **Guard de admin**: middleware `requireAdmin` para crear / editar / eliminar
    rutinas y ejercicios (HU-06, HU-07). Los usuarios normales solo consultan.
 3. **Ejercicio**: añadir `description` (HU-05).
-4. **Rutina**: añadir `duration` en minutos (HU-03).
-5. Actualizar esquemas Joi y la colección Postman.
+4. Actualizar esquemas Joi y la colección Postman.
+
+> HU-03 se ajusta: la rutina muestra nombre y descripción (sin duración). El
+> campo `duration` queda fuera de alcance por simplicidad.
 
 > La asignación de rutina a usuario ya está implementada con `assignedUserId`.
 > Ya NO se construye la entidad Progress (fuera de alcance).
@@ -66,7 +68,7 @@ Para reducir riesgo y complejidad, el alcance se acota a:
 6. Scaffold Angular + servicio HTTP que consume la API REST.
 7. Auth: registro, login, almacenamiento del token, **logout** (HU-10) y guard de
    rutas privadas (HU-08).
-8. Vistas de usuario: lista de rutinas con duración (HU-03), detalle con
+8. Vistas de usuario: lista de rutinas (HU-03), detalle con
    ejercicios (HU-04), info de ejercicio (HU-05), interfaz sencilla (HU-09).
 9. Vistas de admin: CRUD de rutinas y ejercicios (HU-06, HU-07), solo si
    `role = admin`.
@@ -84,7 +86,7 @@ Para reducir riesgo y complejidad, el alcance se acota a:
 |---|---|---|---|
 | HU-01 | Registro de usuario | Backend | ✅ |
 | HU-02 | Inicio de sesión | Backend | ✅ |
-| HU-03 | Visualización de rutinas (con duración) | Backend + Front | ⚠️ falta `duration` y front |
+| HU-03 | Visualización de rutinas (nombre y descripción) | Backend + Front | ✅ backend / ⚠️ falta front |
 | HU-04 | Ejercicios de una rutina | Backend + Front | ⚠️ falta front |
 | HU-05 | Info de ejercicio (descripción, músculo) | Backend + Front | ⚠️ falta `description` y front |
 | HU-06 | Gestión de rutinas (admin) | Backend + Front | ⚠️ falta rol admin y front |
@@ -116,7 +118,7 @@ Esta es la estructura **plana** que debe reemplazar al diagrama modular del Acta
 
 ## 5. Próximos pasos inmediatos
 
-1. Ejecutar la Fase A (roles, `description`, `duration`).
+1. Ejecutar la Fase A (roles + guard de admin, `description` en ejercicio).
 2. Probar la API contra PostgreSQL con Postman.
 3. Iniciar la Fase B (Angular).
 
