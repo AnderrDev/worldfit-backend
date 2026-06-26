@@ -76,7 +76,7 @@ export class UserAdapter implements UserPort {
 
   async getUserById(id: number): Promise<UserDomain | null> {
     try {
-      const user = await this.userRepository.findOne({ where: { id_user: id } });
+      const user = await this.userRepository.findOne({ where: { id_user: id, status_user: 1 } });
       return user ? this.toDomain(user) : null;
     } catch (error) {
       throw new Error('Error al obtener el usuario');
@@ -85,7 +85,7 @@ export class UserAdapter implements UserPort {
 
   async getUserByEmail(email: string): Promise<UserDomain | null> {
     try {
-      const user = await this.userRepository.findOne({ where: { email } });
+      const user = await this.userRepository.findOne({ where: { email, status_user: 1 } });
       return user ? this.toDomain(user) : null;
     } catch (error) {
       throw new Error('Error al obtener el usuario');
@@ -94,7 +94,7 @@ export class UserAdapter implements UserPort {
 
   async getAllUsers(): Promise<UserDomain[]> {
     try {
-      const users = await this.userRepository.find();
+      const users = await this.userRepository.find({ where: { status_user: 1 } });
       return users.map((u) => this.toDomain(u));
     } catch (error) {
       throw new Error('Error al obtener los usuarios');

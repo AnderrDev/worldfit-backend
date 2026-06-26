@@ -78,7 +78,7 @@ export class ExerciseAdapter implements ExercisePort {
 
   async getExerciseById(id: number): Promise<ExerciseDomain | null> {
     try {
-      const exercise = await this.exerciseRepository.findOne({ where: { id_exercise: id } });
+      const exercise = await this.exerciseRepository.findOne({ where: { id_exercise: id, status_exercise: 1 } });
       return exercise ? this.toDomain(exercise) : null;
     } catch (error) {
       throw new Error('Error al obtener el ejercicio');
@@ -87,7 +87,7 @@ export class ExerciseAdapter implements ExercisePort {
 
   async getAllExercises(): Promise<ExerciseDomain[]> {
     try {
-      const exercises = await this.exerciseRepository.find();
+      const exercises = await this.exerciseRepository.find({ where: { status_exercise: 1 } });
       return exercises.map((e) => this.toDomain(e));
     } catch (error) {
       throw new Error('Error al obtener los ejercicios');

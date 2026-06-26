@@ -90,7 +90,7 @@ export class RoutineAdapter implements RoutinePort {
 
   async getRoutineById(id: number): Promise<RoutineDomain | null> {
     try {
-      const routine = await this.routineRepository.findOne({ where: { id_routine: id } });
+      const routine = await this.routineRepository.findOne({ where: { id_routine: id, status_routine: 1 } });
       return routine ? this.toDomain(routine) : null;
     } catch (error) {
       throw new Error('Error al obtener la rutina');
@@ -99,7 +99,7 @@ export class RoutineAdapter implements RoutinePort {
 
   async getAllRoutines(): Promise<RoutineDomain[]> {
     try {
-      const routines = await this.routineRepository.find();
+      const routines = await this.routineRepository.find({ where: { status_routine: 1 } });
       return routines.map((r) => this.toDomain(r));
     } catch (error) {
       throw new Error('Error al obtener las rutinas');
