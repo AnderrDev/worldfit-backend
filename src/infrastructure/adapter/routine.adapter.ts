@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { AppDataSource } from '../config/database';
 import { Routine as RoutineEntity } from '../entities/Routine';
 import { Exercise as ExerciseEntity } from '../entities/Exercise';
-import { Routine as RoutineDomain, Difficulty } from '../../domain/entities/routine';
+import { Routine as RoutineDomain, Difficulty, AssignmentStatus } from '../../domain/entities/routine';
 import { RoutinePort } from '../../domain/routine.port';
 
 export class RoutineAdapter implements RoutinePort {
@@ -21,6 +21,7 @@ export class RoutineAdapter implements RoutinePort {
       // De la relacion N:M extraemos solo los ids hacia el dominio.
       exerciseIds: (routine.exercises ?? []).map((e) => e.id_exercise),
       assignedUserId: routine.assigned_user_id,
+      assignmentStatus: routine.assignment_status as AssignmentStatus,
       status: routine.status_routine,
     };
   }
@@ -42,6 +43,7 @@ export class RoutineAdapter implements RoutinePort {
     entity.difficulty = routine.difficulty;
     entity.exercises = this.toExerciseRefs(routine.exerciseIds);
     entity.assigned_user_id = routine.assignedUserId;
+    entity.assignment_status = routine.assignmentStatus ?? 'pending';
     entity.status_routine = routine.status ?? 1;
     return entity;
   }
@@ -66,6 +68,7 @@ export class RoutineAdapter implements RoutinePort {
       if (routine.difficulty != null) existing.difficulty = routine.difficulty;
       if (routine.exerciseIds != null) existing.exercises = this.toExerciseRefs(routine.exerciseIds);
       if (routine.assignedUserId != null) existing.assigned_user_id = routine.assignedUserId;
+      if (routine.assignmentStatus != null) existing.assignment_status = routine.assignmentStatus;
       if (routine.status != null) existing.status_routine = routine.status;
 
       await this.routineRepository.save(existing);
@@ -103,6 +106,16 @@ export class RoutineAdapter implements RoutinePort {
       return routines.map((r) => this.toDomain(r));
     } catch (error) {
       throw new Error('Error al obtener las rutinas');
+    }
+  }
+
+  async countActiveRoutinesByUser(userId: number): Promise<number> {
+    try {
+      return await this.routineRepository.count({
+        where: { assigned_user_id: userId, status_routine: 1 },
+      });
+    } catch (error) {
+      throw new Error('Error al contar las rutinas del usuario');
     }
   }
 }

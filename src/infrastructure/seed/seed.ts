@@ -95,6 +95,7 @@ export async function seedDatabase(): Promise<void> {
     difficulty: 'beginner',
     exercises: ejerciciosGuardados, // relacion ManyToMany
     assigned_user_id: usuario.id_user,
+    assignment_status: 'pending', // pendiente de que el usuario la acepte
     status_routine: 1,
   });
 

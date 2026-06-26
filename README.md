@@ -154,6 +154,18 @@ npm start
 > Total: **6 CRUD completos** (Users, Exercises, Routines, Categories, Equipment, Goals)
 > con borrado lógico. Patrón de diseño: ver `PATRON-DISENO.md`.
 
+### Lógica de negocio — flujo de aprobación de rutina
+Una rutina asignada tiene un estado de aprobación: `pending` → `accepted` / `rejected`.
+- `PATCH /api/routines/:id/accept` — el usuario asignado acepta su rutina.
+- `PATCH /api/routines/:id/reject` — el usuario asignado la rechaza.
+- Reglas: solo el **usuario asignado** puede decidir (403 si no lo es); no se puede
+  decidir dos veces (409 si ya está aceptada/rechazada).
+
+### Lógica de negocio — reglas de asignación
+Al crear una rutina:
+- El **usuario asignado debe existir y estar activo** (si no, 400).
+- Un usuario no puede superar **5 rutinas activas** asignadas (si no, 400).
+
 > Para las rutas protegidas, envía el token en el header `Authorization: Bearer <token>`.
 
 ## Nota académica

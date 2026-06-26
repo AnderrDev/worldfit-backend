@@ -35,6 +35,9 @@ export class Routine {
   @Column({ type: 'integer' })
   assigned_user_id!: number;
 
+  @Column({ type: 'varchar', length: 20, default: 'pending' })
+  assignment_status!: string;
+
   @Column({ type: 'integer', default: 1 })
   status_routine!: number;
 }
