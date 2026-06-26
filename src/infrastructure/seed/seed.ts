@@ -3,6 +3,9 @@ import { AppDataSource } from '../config/database';
 import { User } from '../entities/User';
 import { Exercise } from '../entities/Exercise';
 import { Routine } from '../entities/Routine';
+import { Category } from '../entities/Category';
+import { Equipment } from '../entities/Equipment';
+import { Goal } from '../entities/Goal';
 
 /**
  * Inserta datos de prueba si la base esta vacia. Es idempotente: si ya existe
@@ -97,4 +100,35 @@ export async function seedDatabase(): Promise<void> {
 
   await routineRepo.save(rutina);
   console.log('Seed: rutina creada y asignada a demo@worldfit.com');
+
+  // ---- Catalogos: categorias, equipamiento y objetivos ----
+  const categoryRepo = AppDataSource.getRepository(Category);
+  const equipmentRepo = AppDataSource.getRepository(Equipment);
+  const goalRepo = AppDataSource.getRepository(Goal);
+
+  await categoryRepo.save(
+    categoryRepo.create([
+      { name_category: 'Fuerza', description: 'Ejercicios para ganar fuerza muscular.', status_category: 1 },
+      { name_category: 'Cardio', description: 'Ejercicios cardiovasculares y de resistencia.', status_category: 1 },
+      { name_category: 'Flexibilidad', description: 'Estiramientos y movilidad.', status_category: 1 },
+    ]),
+  );
+
+  await equipmentRepo.save(
+    equipmentRepo.create([
+      { name_equipment: 'Mancuernas', description: 'Pesas libres de distintos kilajes.', status_equipment: 1 },
+      { name_equipment: 'Barra olimpica', description: 'Barra para levantamientos compuestos.', status_equipment: 1 },
+      { name_equipment: 'Banco plano', description: 'Banco para press y ejercicios de apoyo.', status_equipment: 1 },
+    ]),
+  );
+
+  await goalRepo.save(
+    goalRepo.create([
+      { name_goal: 'Perder peso', description: 'Reducir grasa corporal de forma saludable.', status_goal: 1 },
+      { name_goal: 'Ganar musculo', description: 'Aumentar masa muscular (hipertrofia).', status_goal: 1 },
+      { name_goal: 'Mantenerse activo', description: 'Conservar un estilo de vida saludable.', status_goal: 1 },
+    ]),
+  );
+
+  console.log('Seed: catalogos creados (categorias, equipamiento, objetivos)');
 }

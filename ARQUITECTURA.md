@@ -6,8 +6,13 @@ de qué archivos existen, qué hace cada uno y qué falta por implementar.
 
 **Stack:** Node.js + Express + TypeScript + TypeORM + PostgreSQL · JWT · bcrypt · Joi · cors.
 
-**Alcance:** Usuarios, Ejercicios (catálogo) y Rutinas. Una rutina lista ejercicios
-y se asigna a **un** usuario (`assignedUserId`). Sin tracking de progreso.
+**Alcance:** 6 CRUD completos — **Usuarios, Ejercicios, Rutinas, Categorías,
+Equipamiento y Objetivos**. Una rutina lista ejercicios y se asigna a **un**
+usuario (`assignedUserId`). Categorías, Equipamiento y Objetivos son catálogos.
+Sin tracking de progreso. Escritura (crear/editar/eliminar) restringida a admin.
+
+> Patrón de diseño implementado: **Adapter + Repository + Inyección de
+> Dependencias** (ver `PATRON-DISENO.md`).
 
 ---
 
@@ -107,9 +112,18 @@ Cada entidad replica el mismo molde canónico:
 - **Campos dominio:** `id, name, description, difficulty, exerciseIds[], assignedUserId, status`.
 - **Relación:** `@ManyToMany` con Exercise (tabla intermedia `routine_exercise`).
 - **Asignación:** `assignedUserId` → la rutina pertenece a un usuario.
-- **Endpoints (`/api`, todos con JWT):**
+- **Endpoints (`/api`):** `GET` con JWT; `POST/PUT/DELETE` solo admin.
   - `POST /routines` · `GET /routines` · `GET /routines/:id` · `PUT /routines/:id` · `DELETE /routines/:id`
 - **Reglas:** `difficulty` validado contra lista fija; borrado lógico.
+
+### 3.4 Catálogos: Categories, Equipment, Goals  ✅ implementado
+Tres CRUD completos con la misma forma (`id, name, description, status`) que
+completan los 6 CRUD del requisito:
+- **Categories** (`/categories`) — categorías de ejercicios.
+- **Equipment** (`/equipment`) — equipamiento de gimnasio.
+- **Goals** (`/goals`) — objetivos de entrenamiento.
+- **Endpoints:** `GET` con JWT; `POST/PUT/DELETE` solo admin. Borrado lógico;
+  validación Joi con regex en `name`.
 
 ---
 

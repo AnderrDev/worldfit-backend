@@ -4,6 +4,9 @@ import { ENV } from './environment-vars';
 import { User } from '../entities/User';
 import { Exercise } from '../entities/Exercise';
 import { Routine } from '../entities/Routine';
+import { Category } from '../entities/Category';
+import { Equipment } from '../entities/Equipment';
+import { Goal } from '../entities/Goal';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -15,7 +18,7 @@ export const AppDataSource = new DataSource({
   schema: ENV.DB_SCHEMA,
   synchronize: true, // SOLO en desarrollo; se quita en produccion
   logging: false,
-  entities: [User, Exercise, Routine],
+  entities: [User, Exercise, Routine, Category, Equipment, Goal],
 });
 
 export async function connectDB(): Promise<void> {

@@ -3,6 +3,9 @@ import cors from 'cors';
 import userRoutes from '../routes/user.routes';
 import exerciseRoutes from '../routes/exercise.routes';
 import routineRoutes from '../routes/routine.routes';
+import categoryRoutes from '../routes/category.routes';
+import equipmentRoutes from '../routes/equipment.routes';
+import goalRoutes from '../routes/goal.routes';
 
 export class App {
   private app: express.Application;
@@ -27,6 +30,9 @@ export class App {
     this.app.use('/api', userRoutes);
     this.app.use('/api', exerciseRoutes);
     this.app.use('/api', routineRoutes);
+    this.app.use('/api', categoryRoutes);
+    this.app.use('/api', equipmentRoutes);
+    this.app.use('/api', goalRoutes);
   }
 
   getApp(): express.Application {

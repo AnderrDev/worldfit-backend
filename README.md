@@ -143,8 +143,16 @@ npm start
 ### Exercises (todas protegidas con JWT)
 `POST /api/exercises` · `GET /api/exercises` · `GET /api/exercises/:id` · `PUT /api/exercises/:id` · `DELETE /api/exercises/:id`
 
-### Routines (todas protegidas con JWT)
+### Routines (GET con JWT · POST/PUT/DELETE solo admin)
 `POST /api/routines` · `GET /api/routines` · `GET /api/routines/:id` · `PUT /api/routines/:id` · `DELETE /api/routines/:id`
+
+### Categories / Equipment / Goals (catálogos · GET con JWT · POST/PUT/DELETE solo admin)
+- `/api/categories` · `/api/categories/:id`
+- `/api/equipment` · `/api/equipment/:id`
+- `/api/goals` · `/api/goals/:id`
+
+> Total: **6 CRUD completos** (Users, Exercises, Routines, Categories, Equipment, Goals)
+> con borrado lógico. Patrón de diseño: ver `PATRON-DISENO.md`.
 
 > Para las rutas protegidas, envía el token en el header `Authorization: Bearer <token>`.
 
