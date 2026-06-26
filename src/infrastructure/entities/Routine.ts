@@ -33,7 +33,7 @@ export class Routine {
   exercises!: Exercise[];
 
   @Column({ type: 'integer' })
-  owner_id!: number;
+  assigned_user_id!: number;
 
   @Column({ type: 'integer', default: 1 })
   status_routine!: number;

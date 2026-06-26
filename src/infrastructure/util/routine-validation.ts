@@ -5,7 +5,7 @@ export type RoutineData = {
   description: string;
   difficulty: string;
   exerciseIds: number[];
-  ownerId: number;
+  assignedUserId: number;
   status: number;
 };
 
@@ -22,7 +22,7 @@ export function validateRoutineData(data: any): ValidationRoutineData {
     description: Joi.string().trim().allow('').max(500).required(),
     difficulty: Joi.string().valid(...DIFFICULTIES).required(),
     exerciseIds: Joi.array().items(Joi.number().integer()).default([]),
-    ownerId: Joi.number().integer().required(),
+    assignedUserId: Joi.number().integer().required(),
     status: Joi.number().valid(0, 1).default(1),
   });
 

@@ -20,7 +20,7 @@ export class RoutineAdapter implements RoutinePort {
       difficulty: routine.difficulty as Difficulty,
       // De la relacion N:M extraemos solo los ids hacia el dominio.
       exerciseIds: (routine.exercises ?? []).map((e) => e.id_exercise),
-      ownerId: routine.owner_id,
+      assignedUserId: routine.assigned_user_id,
       status: routine.status_routine,
     };
   }
@@ -41,7 +41,7 @@ export class RoutineAdapter implements RoutinePort {
     entity.description = routine.description;
     entity.difficulty = routine.difficulty;
     entity.exercises = this.toExerciseRefs(routine.exerciseIds);
-    entity.owner_id = routine.ownerId;
+    entity.assigned_user_id = routine.assignedUserId;
     entity.status_routine = routine.status ?? 1;
     return entity;
   }
@@ -65,7 +65,7 @@ export class RoutineAdapter implements RoutinePort {
       if (routine.description != null) existing.description = routine.description;
       if (routine.difficulty != null) existing.difficulty = routine.difficulty;
       if (routine.exerciseIds != null) existing.exercises = this.toExerciseRefs(routine.exerciseIds);
-      if (routine.ownerId != null) existing.owner_id = routine.ownerId;
+      if (routine.assignedUserId != null) existing.assigned_user_id = routine.assignedUserId;
       if (routine.status != null) existing.status_routine = routine.status;
 
       await this.routineRepository.save(existing);

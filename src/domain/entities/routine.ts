@@ -7,6 +7,6 @@ export interface Routine {
   description: string;
   difficulty: Difficulty;
   exerciseIds: number[]; // ids de los ejercicios que componen la rutina
-  ownerId: number; // id del usuario dueno de la rutina
+  assignedUserId: number; // id del usuario al que se le asigna la rutina
   status: number; // 1 = activo, 0 = inactivo (borrado logico)
 }

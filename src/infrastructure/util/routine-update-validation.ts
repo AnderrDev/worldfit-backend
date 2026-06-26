@@ -9,7 +9,7 @@ export function validateRoutineUpdate(data: any) {
     description: Joi.string().trim().allow('').max(500),
     difficulty: Joi.string().valid(...DIFFICULTIES),
     exerciseIds: Joi.array().items(Joi.number().integer()),
-    ownerId: Joi.number().integer(),
+    assignedUserId: Joi.number().integer(),
     status: Joi.number().valid(0, 1),
   }).min(1);
 
