@@ -65,7 +65,17 @@ no sabe nada de Express ni de TypeORM.
 - PostgreSQL (con pgAdmin). Anota la contraseña del usuario `postgres` (puerto 5432).
 
 ### 2. Crear la base de datos
-En pgAdmin (o `psql`):
+
+**Opción A — Docker (recomendada, no requiere instalar PostgreSQL):**
+```bash
+docker compose up -d        # levanta PostgreSQL en localhost:5432
+```
+El contenedor crea la base `worldfit` y el esquema `worldfit` automáticamente
+(ver `docker-compose.yml` y `docker/init/`). Usuario `postgres` / contraseña `postgres`.
+Para detenerlo: `docker compose down` (los datos persisten en el volumen `pgdata`;
+`docker compose down -v` los borra).
+
+**Opción B — PostgreSQL instalado localmente:** en pgAdmin (o `psql`):
 ```sql
 CREATE DATABASE worldfit;
 CREATE SCHEMA worldfit;
