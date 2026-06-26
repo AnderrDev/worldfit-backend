@@ -24,5 +24,7 @@ export async function connectDB(): Promise<void> {
     console.log('Conectado a la base de datos');
   } catch (error) {
     console.error('Error al conectar a la base de datos', error);
+    // Detiene el arranque: sin BD no tiene sentido seguir (evita errores en cascada).
+    throw error;
   }
 }

@@ -68,7 +68,7 @@ no sabe nada de Express ni de TypeORM.
 
 **Opción A — Docker (recomendada, no requiere instalar PostgreSQL):**
 ```bash
-docker compose up -d        # levanta PostgreSQL en localhost:5432
+docker compose up -d        # levanta PostgreSQL en localhost:5433
 ```
 El contenedor crea la base `worldfit` y el esquema `worldfit` automáticamente
 (ver `docker-compose.yml` y `docker/init/`). Usuario `postgres` / contraseña `postgres`.
@@ -88,7 +88,7 @@ cp .env.example .env   # y completa tus valores locales
 ```
 PORT=4000
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=5433
 DB_USER=postgres
 DB_PASSWORD=tu_password
 DB_NAME=worldfit
