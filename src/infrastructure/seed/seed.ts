@@ -4,7 +4,6 @@ import { User } from '../entities/User';
 import { Exercise } from '../entities/Exercise';
 import { Routine } from '../entities/Routine';
 import { Category } from '../entities/Category';
-import { Equipment } from '../entities/Equipment';
 import { Goal } from '../entities/Goal';
 
 /**
@@ -95,9 +94,8 @@ export async function seedDatabase(): Promise<void> {
   await routineRepo.save(rutina);
   console.log('Seed: rutina creada y asignada a demo@worldfit.com');
 
-  // ---- Catalogos: categorias, equipamiento y objetivos ----
+  // ---- Catalogos: categorias y objetivos ----
   const categoryRepo = AppDataSource.getRepository(Category);
-  const equipmentRepo = AppDataSource.getRepository(Equipment);
   const goalRepo = AppDataSource.getRepository(Goal);
 
   await categoryRepo.save(
@@ -105,14 +103,6 @@ export async function seedDatabase(): Promise<void> {
       { name_category: 'Fuerza', description: 'Ejercicios para ganar fuerza muscular.' },
       { name_category: 'Cardio', description: 'Ejercicios cardiovasculares y de resistencia.' },
       { name_category: 'Flexibilidad', description: 'Estiramientos y movilidad.' },
-    ]),
-  );
-
-  await equipmentRepo.save(
-    equipmentRepo.create([
-      { name_equipment: 'Mancuernas', description: 'Pesas libres de distintos kilajes.' },
-      { name_equipment: 'Barra olimpica', description: 'Barra para levantamientos compuestos.' },
-      { name_equipment: 'Banco plano', description: 'Banco para press y ejercicios de apoyo.' },
     ]),
   );
 
@@ -124,5 +114,5 @@ export async function seedDatabase(): Promise<void> {
     ]),
   );
 
-  console.log('Seed: catalogos creados (categorias, equipamiento, objetivos)');
+  console.log('Seed: catalogos creados (categorias y objetivos)');
 }

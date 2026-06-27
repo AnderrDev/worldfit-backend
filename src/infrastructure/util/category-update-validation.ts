@@ -11,6 +11,9 @@ export function validateCategoryUpdate(data: any) {
     description: Joi.string().trim().allow('').max(500).messages({
       'string.max': 'La descripcion no puede superar los 500 caracteres',
     }),
+    isActive: Joi.boolean().messages({
+      'boolean.base': 'El estado debe ser verdadero o falso',
+    }),
   })
     .min(1)
     .messages({ 'object.min': 'Debe enviar al menos un campo para actualizar' });

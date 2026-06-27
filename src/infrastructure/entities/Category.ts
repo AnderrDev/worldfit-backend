@@ -1,6 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity('category')
+@Entity('exercise_categories')
 export class Category {
   @PrimaryGeneratedColumn()
   id_category!: number;
@@ -10,6 +17,15 @@ export class Category {
 
   @Column({ type: 'varchar', length: 500, default: '' })
   description!: string;
+
+  @Column({ type: 'boolean', default: true })
+  is_active!: boolean;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;

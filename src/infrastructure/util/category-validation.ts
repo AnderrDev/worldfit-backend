@@ -3,6 +3,7 @@ import Joi from 'joi';
 export type CategoryData = {
   name: string;
   description: string;
+  isActive: boolean;
 };
 
 type ValidationCategoryData = {
@@ -21,6 +22,9 @@ export function validateCategoryData(data: any): ValidationCategoryData {
     }),
     description: Joi.string().trim().allow('').max(500).default('').messages({
       'string.max': 'La descripcion no puede superar los 500 caracteres',
+    }),
+    isActive: Joi.boolean().default(true).messages({
+      'boolean.base': 'El estado debe ser verdadero o falso',
     }),
   });
 

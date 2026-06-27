@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import { GoalAdapter } from '../adapter/goal.adapter';
+import { UserAdapter } from '../adapter/user.adapter';
 import { GoalApplication } from '../../application/goal.application';
 import { GoalController } from '../controller/goal.controller';
 import { authenticateToken, requireAdmin } from '../web/auth.middleware';
 
 const router = Router();
 
-// Cadena de inyeccion de dependencias: adapter -> application -> controller
 const goalAdapter = new GoalAdapter();
-const goalApplication = new GoalApplication(goalAdapter);
+const userAdapter = new UserAdapter();
+const goalApplication = new GoalApplication(goalAdapter, userAdapter);
 const goalController = new GoalController(goalApplication);
 
 // Consultas: cualquier usuario autenticado (JWT).

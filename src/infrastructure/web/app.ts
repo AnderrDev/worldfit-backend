@@ -7,7 +7,6 @@ import userRoutes from '../routes/user.routes';
 import exerciseRoutes from '../routes/exercise.routes';
 import routineRoutes from '../routes/routine.routes';
 import categoryRoutes from '../routes/category.routes';
-import equipmentRoutes from '../routes/equipment.routes';
 import goalRoutes from '../routes/goal.routes';
 
 // Ruta base versionada (URI versioning). Ej: /api/v1
@@ -42,7 +41,6 @@ export class App {
     this.app.use(API_BASE, exerciseRoutes);
     this.app.use(API_BASE, routineRoutes);
     this.app.use(API_BASE, categoryRoutes);
-    this.app.use(API_BASE, equipmentRoutes);
     this.app.use(API_BASE, goalRoutes);
 
     // Red de seguridad 1: ruta no encontrada -> 404 en JSON (no el HTML de Express).
