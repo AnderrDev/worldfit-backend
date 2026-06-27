@@ -3,7 +3,6 @@ import Joi from 'joi';
 export type CategoryData = {
   name: string;
   description: string;
-  status: number;
 };
 
 type ValidationCategoryData = {
@@ -22,9 +21,6 @@ export function validateCategoryData(data: any): ValidationCategoryData {
     }),
     description: Joi.string().trim().allow('').max(500).default('').messages({
       'string.max': 'La descripcion no puede superar los 500 caracteres',
-    }),
-    status: Joi.number().valid(0, 1).default(1).messages({
-      'any.only': 'El estado debe ser 0 (inactivo) o 1 (activo)',
     }),
   });
 

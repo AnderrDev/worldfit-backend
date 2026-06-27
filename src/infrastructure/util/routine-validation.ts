@@ -6,7 +6,6 @@ export type RoutineData = {
   difficulty: string;
   exerciseIds: number[];
   assignedUserId: number;
-  status: number;
 };
 
 type ValidationRoutineData = {
@@ -39,9 +38,6 @@ export function validateRoutineData(data: any): ValidationRoutineData {
     assignedUserId: Joi.number().integer().required().messages({
       'number.base': 'El id del usuario asignado debe ser un numero',
       'any.required': 'Debe indicar el usuario al que se asigna la rutina',
-    }),
-    status: Joi.number().valid(0, 1).default(1).messages({
-      'any.only': 'El estado debe ser 0 (inactivo) o 1 (activo)',
     }),
   });
 

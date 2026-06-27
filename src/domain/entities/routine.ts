@@ -12,5 +12,4 @@ export interface Routine {
   exerciseIds: number[]; // ids de los ejercicios que componen la rutina
   assignedUserId: number; // id del usuario al que se le asigna la rutina
   assignmentStatus: AssignmentStatus; // pending -> accepted/rejected
-  status: number; // 1 = activo, 0 = inactivo (borrado logico)
 }

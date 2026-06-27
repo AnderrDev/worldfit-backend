@@ -19,7 +19,6 @@ export class UserAdapter implements UserPort {
       email: user.email,
       password: user.password,
       role: user.role_user as Role,
-      status: user.status_user,
     };
   }
 
@@ -29,7 +28,6 @@ export class UserAdapter implements UserPort {
     entity.email = user.email;
     entity.password = user.password;
     entity.role_user = user.role ?? 'user';
-    entity.status_user = user.status ?? 1;
     return entity;
   }
 
@@ -52,7 +50,6 @@ export class UserAdapter implements UserPort {
       if (user.email != null) existing.email = user.email;
       if (user.password != null) existing.password = user.password;
       if (user.role != null) existing.role_user = user.role;
-      if (user.status != null) existing.status_user = user.status;
 
       await this.userRepository.save(existing);
       return true;
@@ -61,14 +58,11 @@ export class UserAdapter implements UserPort {
     }
   }
 
-  // BORRADO LOGICO: no se elimina el registro, se pone status en 0
+  // BORRADO LOGICO con softDelete: marca deleted_at; TypeORM lo excluye luego.
   async deleteUser(id: number): Promise<boolean> {
     try {
-      const existing = await this.userRepository.findOne({ where: { id_user: id } });
-      if (!existing) return false;
-      existing.status_user = 0;
-      await this.userRepository.save(existing);
-      return true;
+      const result = await this.userRepository.softDelete(id);
+      return !!result.affected && result.affected > 0;
     } catch (error) {
       throw new Error('Error al eliminar el usuario');
     }
@@ -76,7 +70,7 @@ export class UserAdapter implements UserPort {
 
   async getUserById(id: number): Promise<UserDomain | null> {
     try {
-      const user = await this.userRepository.findOne({ where: { id_user: id, status_user: 1 } });
+      const user = await this.userRepository.findOne({ where: { id_user: id } });
       return user ? this.toDomain(user) : null;
     } catch (error) {
       throw new Error('Error al obtener el usuario');
@@ -85,7 +79,7 @@ export class UserAdapter implements UserPort {
 
   async getUserByEmail(email: string): Promise<UserDomain | null> {
     try {
-      const user = await this.userRepository.findOne({ where: { email, status_user: 1 } });
+      const user = await this.userRepository.findOne({ where: { email } });
       return user ? this.toDomain(user) : null;
     } catch (error) {
       throw new Error('Error al obtener el usuario');
@@ -94,7 +88,7 @@ export class UserAdapter implements UserPort {
 
   async getAllUsers(): Promise<UserDomain[]> {
     try {
-      const users = await this.userRepository.find({ where: { status_user: 1 } });
+      const users = await this.userRepository.find();
       return users.map((u) => this.toDomain(u));
     } catch (error) {
       throw new Error('Error al obtener los usuarios');

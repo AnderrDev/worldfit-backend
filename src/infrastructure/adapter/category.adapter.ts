@@ -16,7 +16,6 @@ export class CategoryAdapter implements CategoryPort {
       id: category.id_category,
       name: category.name_category,
       description: category.description,
-      status: category.status_category,
     };
   }
 
@@ -24,7 +23,6 @@ export class CategoryAdapter implements CategoryPort {
     const entity = new CategoryEntity();
     entity.name_category = category.name;
     entity.description = category.description;
-    entity.status_category = category.status ?? 1;
     return entity;
   }
 
@@ -44,7 +42,6 @@ export class CategoryAdapter implements CategoryPort {
 
       if (category.name != null) existing.name_category = category.name;
       if (category.description != null) existing.description = category.description;
-      if (category.status != null) existing.status_category = category.status;
 
       await this.categoryRepository.save(existing);
       return true;
@@ -53,14 +50,11 @@ export class CategoryAdapter implements CategoryPort {
     }
   }
 
-  // BORRADO LOGICO: status en 0
+  // BORRADO LOGICO con softDelete: marca deleted_at.
   async deleteCategory(id: number): Promise<boolean> {
     try {
-      const existing = await this.categoryRepository.findOne({ where: { id_category: id } });
-      if (!existing) return false;
-      existing.status_category = 0;
-      await this.categoryRepository.save(existing);
-      return true;
+      const result = await this.categoryRepository.softDelete(id);
+      return !!result.affected && result.affected > 0;
     } catch (error) {
       throw new Error('Error al eliminar la categoria');
     }
@@ -68,7 +62,7 @@ export class CategoryAdapter implements CategoryPort {
 
   async getCategoryById(id: number): Promise<CategoryDomain | null> {
     try {
-      const category = await this.categoryRepository.findOne({ where: { id_category: id, status_category: 1 } });
+      const category = await this.categoryRepository.findOne({ where: { id_category: id } });
       return category ? this.toDomain(category) : null;
     } catch (error) {
       throw new Error('Error al obtener la categoria');
@@ -77,7 +71,7 @@ export class CategoryAdapter implements CategoryPort {
 
   async getCategoryByName(name: string): Promise<CategoryDomain | null> {
     try {
-      const category = await this.categoryRepository.findOne({ where: { name_category: name, status_category: 1 } });
+      const category = await this.categoryRepository.findOne({ where: { name_category: name } });
       return category ? this.toDomain(category) : null;
     } catch (error) {
       throw new Error('Error al obtener la categoria');
@@ -86,7 +80,7 @@ export class CategoryAdapter implements CategoryPort {
 
   async getAllCategories(): Promise<CategoryDomain[]> {
     try {
-      const categories = await this.categoryRepository.find({ where: { status_category: 1 } });
+      const categories = await this.categoryRepository.find();
       return categories.map((c) => this.toDomain(c));
     } catch (error) {
       throw new Error('Error al obtener las categorias');

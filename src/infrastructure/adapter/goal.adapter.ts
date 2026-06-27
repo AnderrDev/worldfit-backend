@@ -16,7 +16,6 @@ export class GoalAdapter implements GoalPort {
       id: goal.id_goal,
       name: goal.name_goal,
       description: goal.description,
-      status: goal.status_goal,
     };
   }
 
@@ -24,7 +23,6 @@ export class GoalAdapter implements GoalPort {
     const entity = new GoalEntity();
     entity.name_goal = goal.name;
     entity.description = goal.description;
-    entity.status_goal = goal.status ?? 1;
     return entity;
   }
 
@@ -44,7 +42,6 @@ export class GoalAdapter implements GoalPort {
 
       if (goal.name != null) existing.name_goal = goal.name;
       if (goal.description != null) existing.description = goal.description;
-      if (goal.status != null) existing.status_goal = goal.status;
 
       await this.goalRepository.save(existing);
       return true;
@@ -53,14 +50,11 @@ export class GoalAdapter implements GoalPort {
     }
   }
 
-  // BORRADO LOGICO: status en 0
+  // BORRADO LOGICO con softDelete: marca deleted_at.
   async deleteGoal(id: number): Promise<boolean> {
     try {
-      const existing = await this.goalRepository.findOne({ where: { id_goal: id } });
-      if (!existing) return false;
-      existing.status_goal = 0;
-      await this.goalRepository.save(existing);
-      return true;
+      const result = await this.goalRepository.softDelete(id);
+      return !!result.affected && result.affected > 0;
     } catch (error) {
       throw new Error('Error al eliminar el objetivo');
     }
@@ -68,7 +62,7 @@ export class GoalAdapter implements GoalPort {
 
   async getGoalById(id: number): Promise<GoalDomain | null> {
     try {
-      const goal = await this.goalRepository.findOne({ where: { id_goal: id, status_goal: 1 } });
+      const goal = await this.goalRepository.findOne({ where: { id_goal: id } });
       return goal ? this.toDomain(goal) : null;
     } catch (error) {
       throw new Error('Error al obtener el objetivo');
@@ -77,7 +71,7 @@ export class GoalAdapter implements GoalPort {
 
   async getGoalByName(name: string): Promise<GoalDomain | null> {
     try {
-      const goal = await this.goalRepository.findOne({ where: { name_goal: name, status_goal: 1 } });
+      const goal = await this.goalRepository.findOne({ where: { name_goal: name } });
       return goal ? this.toDomain(goal) : null;
     } catch (error) {
       throw new Error('Error al obtener el objetivo');
@@ -86,7 +80,7 @@ export class GoalAdapter implements GoalPort {
 
   async getAllGoals(): Promise<GoalDomain[]> {
     try {
-      const goals = await this.goalRepository.find({ where: { status_goal: 1 } });
+      const goals = await this.goalRepository.find();
       return goals.map((g) => this.toDomain(g));
     } catch (error) {
       throw new Error('Error al obtener los objetivos');

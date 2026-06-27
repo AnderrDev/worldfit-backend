@@ -7,6 +7,6 @@ export interface RoutinePort {
   deleteRoutine(id: number): Promise<boolean>; // borrado logico
   getRoutineById(id: number): Promise<Routine | null>;
   getAllRoutines(): Promise<Routine[]>;
-  // Cuenta las rutinas activas (status=1) asignadas a un usuario.
+  // Cuenta las rutinas activas (no eliminadas) asignadas a un usuario.
   countActiveRoutinesByUser(userId: number): Promise<number>;
 }

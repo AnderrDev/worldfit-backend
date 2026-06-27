@@ -94,22 +94,22 @@ Cada entidad replica el mismo molde canónico:
 ## 3. Detalle por entidad
 
 ### 3.1 Users  ✅ implementado
-- **Campos dominio:** `id, name, email, password, role, status`.
+- **Campos dominio:** `id, name, email, password, role`.
 - **Endpoints (`/api`):**
   - `POST /users` (público) — crear
   - `POST /login` (público) — devuelve JWT
   - `GET /users` · `GET /users/:id` · `GET /users/email/:email` (JWT)
   - `PUT /users/:id` · `DELETE /users/:id` (JWT, baja lógica)
-- **Reglas:** email único, `bcrypt.hash(password, 12)`, borrado lógico `status = 0`.
+- **Reglas:** email único, `bcrypt.hash(password, 12)`, borrado lógico (deletedAt).
 
 ### 3.2 Exercises (catálogo)  ✅ implementado
-- **Campos dominio:** `id, name, description, muscleGroup, sets, reps, status`.
+- **Campos dominio:** `id, name, description, muscleGroup, sets, reps`.
 - **Endpoints (`/api`, todos con JWT):**
   - `POST /exercises` · `GET /exercises` · `GET /exercises/:id` · `PUT /exercises/:id` · `DELETE /exercises/:id`
 - **Reglas:** `muscleGroup` validado contra lista fija; borrado lógico.
 
 ### 3.3 Routines  ✅ implementado
-- **Campos dominio:** `id, name, description, difficulty, exerciseIds[], assignedUserId, status`.
+- **Campos dominio:** `id, name, description, difficulty, exerciseIds[], assignedUserId, assignmentStatus`.
 - **Relación:** `@ManyToMany` con Exercise (tabla intermedia `routine_exercise`).
 - **Asignación:** `assignedUserId` → la rutina pertenece a un usuario.
 - **Endpoints (`/api`):** `GET` con JWT; `POST/PUT/DELETE` solo admin.
@@ -117,7 +117,7 @@ Cada entidad replica el mismo molde canónico:
 - **Reglas:** `difficulty` validado contra lista fija; borrado lógico.
 
 ### 3.4 Catálogos: Categories, Equipment, Goals  ✅ implementado
-Tres CRUD completos con la misma forma (`id, name, description, status`) que
+Tres CRUD completos con la misma forma (`id, name, description`) que
 completan los 6 CRUD del requisito:
 - **Categories** (`/categories`) — categorías de ejercicios.
 - **Equipment** (`/equipment`) — equipamiento de gimnasio.
@@ -133,7 +133,7 @@ completan los 6 CRUD del requisito:
 - [x] Cada entidad: interface de dominio, puerto, servicio, entidad TypeORM, adaptador, validación Joi, controlador y rutas.
 - [x] El servicio recibe el **puerto** por constructor; el controlador recibe el **servicio** por constructor.
 - [x] El adaptador `implements` el puerto y transforma con `toDomain` / `toEntity`.
-- [x] **Borrado lógico** con campo `status` (1 = activo, 0 = inactivo).
+- [x] **Borrado lógico** con `deletedAt` (@DeleteDateColumn de TypeORM + softDelete).
 - [x] Validación con **módulos Joi** por caso de uso (crear / actualizar parcial).
 - [x] Códigos HTTP: 201 crear, 200 consultar/actualizar, 400 inválido, 401 auth, 404 no encontrado, 500 error.
 - [x] Rutas bajo el prefijo `/api`; middlewares `express.json()` y `cors()`.

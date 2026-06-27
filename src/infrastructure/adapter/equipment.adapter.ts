@@ -16,7 +16,6 @@ export class EquipmentAdapter implements EquipmentPort {
       id: equipment.id_equipment,
       name: equipment.name_equipment,
       description: equipment.description,
-      status: equipment.status_equipment,
     };
   }
 
@@ -24,7 +23,6 @@ export class EquipmentAdapter implements EquipmentPort {
     const entity = new EquipmentEntity();
     entity.name_equipment = equipment.name;
     entity.description = equipment.description;
-    entity.status_equipment = equipment.status ?? 1;
     return entity;
   }
 
@@ -44,7 +42,6 @@ export class EquipmentAdapter implements EquipmentPort {
 
       if (equipment.name != null) existing.name_equipment = equipment.name;
       if (equipment.description != null) existing.description = equipment.description;
-      if (equipment.status != null) existing.status_equipment = equipment.status;
 
       await this.equipmentRepository.save(existing);
       return true;
@@ -53,14 +50,11 @@ export class EquipmentAdapter implements EquipmentPort {
     }
   }
 
-  // BORRADO LOGICO: status en 0
+  // BORRADO LOGICO con softDelete: marca deleted_at.
   async deleteEquipment(id: number): Promise<boolean> {
     try {
-      const existing = await this.equipmentRepository.findOne({ where: { id_equipment: id } });
-      if (!existing) return false;
-      existing.status_equipment = 0;
-      await this.equipmentRepository.save(existing);
-      return true;
+      const result = await this.equipmentRepository.softDelete(id);
+      return !!result.affected && result.affected > 0;
     } catch (error) {
       throw new Error('Error al eliminar el equipamiento');
     }
@@ -68,7 +62,7 @@ export class EquipmentAdapter implements EquipmentPort {
 
   async getEquipmentById(id: number): Promise<EquipmentDomain | null> {
     try {
-      const equipment = await this.equipmentRepository.findOne({ where: { id_equipment: id, status_equipment: 1 } });
+      const equipment = await this.equipmentRepository.findOne({ where: { id_equipment: id } });
       return equipment ? this.toDomain(equipment) : null;
     } catch (error) {
       throw new Error('Error al obtener el equipamiento');
@@ -77,7 +71,7 @@ export class EquipmentAdapter implements EquipmentPort {
 
   async getEquipmentByName(name: string): Promise<EquipmentDomain | null> {
     try {
-      const equipment = await this.equipmentRepository.findOne({ where: { name_equipment: name, status_equipment: 1 } });
+      const equipment = await this.equipmentRepository.findOne({ where: { name_equipment: name } });
       return equipment ? this.toDomain(equipment) : null;
     } catch (error) {
       throw new Error('Error al obtener el equipamiento');
@@ -86,7 +80,7 @@ export class EquipmentAdapter implements EquipmentPort {
 
   async getAllEquipment(): Promise<EquipmentDomain[]> {
     try {
-      const equipment = await this.equipmentRepository.find({ where: { status_equipment: 1 } });
+      const equipment = await this.equipmentRepository.find();
       return equipment.map((e) => this.toDomain(e));
     } catch (error) {
       throw new Error('Error al obtener el equipamiento');

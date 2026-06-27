@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
 
 @Entity('exercise')
 export class Exercise {
@@ -20,6 +20,6 @@ export class Exercise {
   @Column({ type: 'integer' })
   reps!: number;
 
-  @Column({ type: 'integer', default: 1 })
-  status_exercise!: number;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

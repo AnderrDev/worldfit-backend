@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
 
 @Entity('equipment')
 export class Equipment {
@@ -11,6 +11,6 @@ export class Equipment {
   @Column({ type: 'varchar', length: 500, default: '' })
   description!: string;
 
-  @Column({ type: 'integer', default: 1 })
-  status_equipment!: number;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

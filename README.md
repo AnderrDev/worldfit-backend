@@ -53,7 +53,7 @@ no sabe nada de Express ni de TypeORM.
 - Cada entidad tiene: interface de dominio, puerto, servicio (application), entidad TypeORM, adaptador, validación Joi, controlador y rutas.
 - El servicio recibe el **puerto** por constructor; el controlador recibe el **servicio** por constructor.
 - El adaptador `implements` el puerto y convierte con `toDomain()` / `toEntity()`.
-- **Borrado lógico** con campo `status` (1 = activo, 0 = inactivo): `delete` actualiza el status, no elimina la fila.
+- **Borrado lógico** con `deletedAt` (`@DeleteDateColumn` de TypeORM): `delete` marca la fecha (`softDelete`), no elimina la fila; las consultas excluyen automáticamente los registros borrados.
 - Validación con **módulos Joi** por caso de uso (crear / actualizar parcial / email).
 - Seguridad: `bcrypt.hash(password, 12)` antes de guardar; JWT (`Authorization: Bearer <token>`).
 - Códigos HTTP: 201 crear, 200 consultar/actualizar, 400 datos inválidos, 401 autenticación, 404 no encontrado, 500 error interno.
@@ -153,7 +153,7 @@ pega el token y ya puedes lanzar el resto de peticiones.
 | GET | `/api/v1/users/:id` | Sí | Obtener por id |
 | GET | `/api/v1/users/email/:email` | Sí | Obtener por email |
 | PUT | `/api/v1/users/:id` | Sí | Actualizar |
-| DELETE | `/api/v1/users/:id` | Sí | Baja lógica (status = 0) |
+| DELETE | `/api/v1/users/:id` | Sí | Baja lógica (deletedAt) |
 
 ### Exercises (GET con JWT · POST/PUT/DELETE solo admin)
 `POST /api/v1/exercises` · `GET /api/v1/exercises` · `GET /api/v1/exercises/:id` · `PUT /api/v1/exercises/:id` · `DELETE /api/v1/exercises/:id`

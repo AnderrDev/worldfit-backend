@@ -15,5 +15,4 @@ export interface Exercise {
   muscleGroup: MuscleGroup;
   sets: number;
   reps: number;
-  status: number; // 1 = activo, 0 = inactivo (borrado logico)
 }

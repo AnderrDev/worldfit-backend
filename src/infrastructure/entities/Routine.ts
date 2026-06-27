@@ -4,6 +4,7 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Exercise } from './Exercise';
 
@@ -38,6 +39,6 @@ export class Routine {
   @Column({ type: 'varchar', length: 20, default: 'pending' })
   assignment_status!: string;
 
-  @Column({ type: 'integer', default: 1 })
-  status_routine!: number;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

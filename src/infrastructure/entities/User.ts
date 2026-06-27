@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
 
 @Entity('user')
 export class User {
@@ -17,6 +17,8 @@ export class User {
   @Column({ type: 'varchar', length: 20, default: 'user' })
   role_user!: string;
 
-  @Column({ type: 'integer', default: 1 })
-  status_user!: number;
+  // Borrado logico: si tiene fecha, el registro esta eliminado.
+  // TypeORM excluye automaticamente estos registros en las consultas.
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 }

@@ -100,7 +100,7 @@ export class RoutineApplication {
   }
 
   private async validarUsuarioAsignado(userId: number): Promise<void> {
-    // getUserById ya filtra por status=1, asi que null = no existe o esta inactivo.
+    // getUserById excluye los borrados logicamente: null = no existe o esta eliminado.
     const user = await this.userPort.getUserById(userId);
     if (!user) {
       throw new BusinessError('El usuario asignado no existe o no esta activo');

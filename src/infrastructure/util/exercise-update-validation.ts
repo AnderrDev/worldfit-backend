@@ -23,9 +23,6 @@ export function validateExerciseUpdate(data: any) {
       'number.base': 'Las repeticiones deben ser un numero',
       'number.min': 'Las repeticiones deben ser al menos 1',
     }),
-    status: Joi.number().valid(0, 1).messages({
-      'any.only': 'El estado debe ser 0 (inactivo) o 1 (activo)',
-    }),
   })
     .min(1)
     .messages({ 'object.min': 'Debe enviar al menos un campo para actualizar' });

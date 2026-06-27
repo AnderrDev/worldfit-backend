@@ -35,7 +35,6 @@ export async function seedDatabase(): Promise<void> {
     email: ADMIN_EMAIL,
     password: await bcrypt.hash('Admin123', 12),
     role_user: 'admin',
-    status_user: 1,
   });
 
   const usuario = userRepo.create({
@@ -43,7 +42,6 @@ export async function seedDatabase(): Promise<void> {
     email: 'demo@worldfit.com',
     password: await bcrypt.hash('Demo123', 12),
     role_user: 'user',
-    status_user: 1,
   });
 
   await userRepo.save([admin, usuario]);
@@ -57,7 +55,6 @@ export async function seedDatabase(): Promise<void> {
       muscle_group: 'chest',
       sets: 4,
       reps: 10,
-      status_exercise: 1,
     },
     {
       name_exercise: 'Sentadilla',
@@ -65,7 +62,6 @@ export async function seedDatabase(): Promise<void> {
       muscle_group: 'legs',
       sets: 4,
       reps: 12,
-      status_exercise: 1,
     },
     {
       name_exercise: 'Dominadas',
@@ -73,7 +69,6 @@ export async function seedDatabase(): Promise<void> {
       muscle_group: 'back',
       sets: 3,
       reps: 8,
-      status_exercise: 1,
     },
     {
       name_exercise: 'Plancha abdominal',
@@ -81,7 +76,6 @@ export async function seedDatabase(): Promise<void> {
       muscle_group: 'core',
       sets: 3,
       reps: 1,
-      status_exercise: 1,
     },
   ]);
 
@@ -96,7 +90,6 @@ export async function seedDatabase(): Promise<void> {
     exercises: ejerciciosGuardados, // relacion ManyToMany
     assigned_user_id: usuario.id_user,
     assignment_status: 'pending', // pendiente de que el usuario la acepte
-    status_routine: 1,
   });
 
   await routineRepo.save(rutina);
@@ -109,25 +102,25 @@ export async function seedDatabase(): Promise<void> {
 
   await categoryRepo.save(
     categoryRepo.create([
-      { name_category: 'Fuerza', description: 'Ejercicios para ganar fuerza muscular.', status_category: 1 },
-      { name_category: 'Cardio', description: 'Ejercicios cardiovasculares y de resistencia.', status_category: 1 },
-      { name_category: 'Flexibilidad', description: 'Estiramientos y movilidad.', status_category: 1 },
+      { name_category: 'Fuerza', description: 'Ejercicios para ganar fuerza muscular.' },
+      { name_category: 'Cardio', description: 'Ejercicios cardiovasculares y de resistencia.' },
+      { name_category: 'Flexibilidad', description: 'Estiramientos y movilidad.' },
     ]),
   );
 
   await equipmentRepo.save(
     equipmentRepo.create([
-      { name_equipment: 'Mancuernas', description: 'Pesas libres de distintos kilajes.', status_equipment: 1 },
-      { name_equipment: 'Barra olimpica', description: 'Barra para levantamientos compuestos.', status_equipment: 1 },
-      { name_equipment: 'Banco plano', description: 'Banco para press y ejercicios de apoyo.', status_equipment: 1 },
+      { name_equipment: 'Mancuernas', description: 'Pesas libres de distintos kilajes.' },
+      { name_equipment: 'Barra olimpica', description: 'Barra para levantamientos compuestos.' },
+      { name_equipment: 'Banco plano', description: 'Banco para press y ejercicios de apoyo.' },
     ]),
   );
 
   await goalRepo.save(
     goalRepo.create([
-      { name_goal: 'Perder peso', description: 'Reducir grasa corporal de forma saludable.', status_goal: 1 },
-      { name_goal: 'Ganar musculo', description: 'Aumentar masa muscular (hipertrofia).', status_goal: 1 },
-      { name_goal: 'Mantenerse activo', description: 'Conservar un estilo de vida saludable.', status_goal: 1 },
+      { name_goal: 'Perder peso', description: 'Reducir grasa corporal de forma saludable.' },
+      { name_goal: 'Ganar musculo', description: 'Aumentar masa muscular (hipertrofia).' },
+      { name_goal: 'Mantenerse activo', description: 'Conservar un estilo de vida saludable.' },
     ]),
   );
 

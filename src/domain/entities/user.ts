@@ -7,5 +7,4 @@ export interface User {
   email: string;
   password: string;
   role: Role; // 'user' = normal, 'admin' = gestiona ejercicios y rutinas
-  status: number; // 1 = activo, 0 = inactivo (borrado logico)
 }

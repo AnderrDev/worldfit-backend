@@ -6,7 +6,6 @@ export type ExerciseData = {
   muscleGroup: string;
   sets: number;
   reps: number;
-  status: number;
 };
 
 type ValidationExerciseData = {
@@ -42,9 +41,6 @@ export function validateExerciseData(data: any): ValidationExerciseData {
       'number.integer': 'Las repeticiones deben ser un numero entero',
       'number.min': 'Las repeticiones deben ser al menos 1',
       'any.required': 'Las repeticiones son obligatorias',
-    }),
-    status: Joi.number().valid(0, 1).default(1).messages({
-      'any.only': 'El estado debe ser 0 (inactivo) o 1 (activo)',
     }),
   });
 

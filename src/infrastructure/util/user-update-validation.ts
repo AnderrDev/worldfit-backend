@@ -19,9 +19,6 @@ export function validateUserUpdate(data: any) {
     role: Joi.string().valid('user', 'admin').messages({
       'any.only': 'El rol debe ser "user" o "admin"',
     }),
-    status: Joi.number().valid(0, 1).messages({
-      'any.only': 'El estado debe ser 0 (inactivo) o 1 (activo)',
-    }),
   })
     .min(1)
     .messages({ 'object.min': 'Debe enviar al menos un campo para actualizar' });

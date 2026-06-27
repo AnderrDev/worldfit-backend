@@ -19,7 +19,6 @@ export class ExerciseAdapter implements ExercisePort {
       muscleGroup: exercise.muscle_group as MuscleGroup,
       sets: exercise.sets,
       reps: exercise.reps,
-      status: exercise.status_exercise,
     };
   }
 
@@ -30,7 +29,6 @@ export class ExerciseAdapter implements ExercisePort {
     entity.muscle_group = exercise.muscleGroup;
     entity.sets = exercise.sets;
     entity.reps = exercise.reps;
-    entity.status_exercise = exercise.status ?? 1;
     return entity;
   }
 
@@ -54,7 +52,6 @@ export class ExerciseAdapter implements ExercisePort {
       if (exercise.muscleGroup != null) existing.muscle_group = exercise.muscleGroup;
       if (exercise.sets != null) existing.sets = exercise.sets;
       if (exercise.reps != null) existing.reps = exercise.reps;
-      if (exercise.status != null) existing.status_exercise = exercise.status;
 
       await this.exerciseRepository.save(existing);
       return true;
@@ -63,14 +60,11 @@ export class ExerciseAdapter implements ExercisePort {
     }
   }
 
-  // BORRADO LOGICO: status en 0
+  // BORRADO LOGICO con softDelete: marca deleted_at.
   async deleteExercise(id: number): Promise<boolean> {
     try {
-      const existing = await this.exerciseRepository.findOne({ where: { id_exercise: id } });
-      if (!existing) return false;
-      existing.status_exercise = 0;
-      await this.exerciseRepository.save(existing);
-      return true;
+      const result = await this.exerciseRepository.softDelete(id);
+      return !!result.affected && result.affected > 0;
     } catch (error) {
       throw new Error('Error al eliminar el ejercicio');
     }
@@ -78,7 +72,7 @@ export class ExerciseAdapter implements ExercisePort {
 
   async getExerciseById(id: number): Promise<ExerciseDomain | null> {
     try {
-      const exercise = await this.exerciseRepository.findOne({ where: { id_exercise: id, status_exercise: 1 } });
+      const exercise = await this.exerciseRepository.findOne({ where: { id_exercise: id } });
       return exercise ? this.toDomain(exercise) : null;
     } catch (error) {
       throw new Error('Error al obtener el ejercicio');
@@ -87,7 +81,7 @@ export class ExerciseAdapter implements ExercisePort {
 
   async getAllExercises(): Promise<ExerciseDomain[]> {
     try {
-      const exercises = await this.exerciseRepository.find({ where: { status_exercise: 1 } });
+      const exercises = await this.exerciseRepository.find();
       return exercises.map((e) => this.toDomain(e));
     } catch (error) {
       throw new Error('Error al obtener los ejercicios');

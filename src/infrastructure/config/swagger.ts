@@ -8,7 +8,7 @@ const bearerAuth = [{ bearerAuth: [] }];
 // Ruta base versionada que usan todos los endpoints (ej. /api/v1).
 const API_BASE = `${ENV.API_PREFIX}/${ENV.API_VERSION}`;
 
-// Operaciones CRUD genericas para los catalogos (name/description/status).
+// Operaciones CRUD genericas para los catalogos (name/description).
 function catalogPaths(resource: string, tag: string, singular: string) {
   return {
     [`/${resource}`]: {

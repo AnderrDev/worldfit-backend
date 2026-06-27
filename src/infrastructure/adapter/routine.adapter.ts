@@ -22,7 +22,6 @@ export class RoutineAdapter implements RoutinePort {
       exerciseIds: (routine.exercises ?? []).map((e) => e.id_exercise),
       assignedUserId: routine.assigned_user_id,
       assignmentStatus: routine.assignment_status as AssignmentStatus,
-      status: routine.status_routine,
     };
   }
 
@@ -44,7 +43,6 @@ export class RoutineAdapter implements RoutinePort {
     entity.exercises = this.toExerciseRefs(routine.exerciseIds);
     entity.assigned_user_id = routine.assignedUserId;
     entity.assignment_status = routine.assignmentStatus ?? 'pending';
-    entity.status_routine = routine.status ?? 1;
     return entity;
   }
 
@@ -69,7 +67,6 @@ export class RoutineAdapter implements RoutinePort {
       if (routine.exerciseIds != null) existing.exercises = this.toExerciseRefs(routine.exerciseIds);
       if (routine.assignedUserId != null) existing.assigned_user_id = routine.assignedUserId;
       if (routine.assignmentStatus != null) existing.assignment_status = routine.assignmentStatus;
-      if (routine.status != null) existing.status_routine = routine.status;
 
       await this.routineRepository.save(existing);
       return true;
@@ -78,14 +75,11 @@ export class RoutineAdapter implements RoutinePort {
     }
   }
 
-  // BORRADO LOGICO: status en 0
+  // BORRADO LOGICO con softDelete: marca deleted_at.
   async deleteRoutine(id: number): Promise<boolean> {
     try {
-      const existing = await this.routineRepository.findOne({ where: { id_routine: id } });
-      if (!existing) return false;
-      existing.status_routine = 0;
-      await this.routineRepository.save(existing);
-      return true;
+      const result = await this.routineRepository.softDelete(id);
+      return !!result.affected && result.affected > 0;
     } catch (error) {
       throw new Error('Error al eliminar la rutina');
     }
@@ -93,7 +87,7 @@ export class RoutineAdapter implements RoutinePort {
 
   async getRoutineById(id: number): Promise<RoutineDomain | null> {
     try {
-      const routine = await this.routineRepository.findOne({ where: { id_routine: id, status_routine: 1 } });
+      const routine = await this.routineRepository.findOne({ where: { id_routine: id } });
       return routine ? this.toDomain(routine) : null;
     } catch (error) {
       throw new Error('Error al obtener la rutina');
@@ -102,7 +96,7 @@ export class RoutineAdapter implements RoutinePort {
 
   async getAllRoutines(): Promise<RoutineDomain[]> {
     try {
-      const routines = await this.routineRepository.find({ where: { status_routine: 1 } });
+      const routines = await this.routineRepository.find();
       return routines.map((r) => this.toDomain(r));
     } catch (error) {
       throw new Error('Error al obtener las rutinas');
@@ -111,8 +105,9 @@ export class RoutineAdapter implements RoutinePort {
 
   async countActiveRoutinesByUser(userId: number): Promise<number> {
     try {
+      // find/count excluyen automaticamente las rutinas con borrado logico.
       return await this.routineRepository.count({
-        where: { assigned_user_id: userId, status_routine: 1 },
+        where: { assigned_user_id: userId },
       });
     } catch (error) {
       throw new Error('Error al contar las rutinas del usuario');

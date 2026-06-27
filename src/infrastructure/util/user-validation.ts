@@ -5,7 +5,6 @@ export type UserData = {
   email: string;
   password: string;
   role: string;
-  status: number;
 };
 
 type ValidationUserData = {
@@ -35,10 +34,6 @@ export function validateUserData(data: any): ValidationUserData {
     }),
     role: Joi.string().valid('user', 'admin').default('user').messages({
       'any.only': 'El rol debe ser "user" o "admin"',
-    }),
-    status: Joi.number().valid(0, 1).default(1).messages({
-      'number.base': 'El estado debe ser numerico',
-      'any.only': 'El estado debe ser 0 (inactivo) o 1 (activo)',
     }),
   });
 
