@@ -14,11 +14,20 @@ export class UserApplication {
     this.rolePort = rolePort;
   }
 
-  async createUser(user: Omit<User, 'id'>): Promise<number> {
-    if (user.roleId) {
+  async createUser(user: Omit<User, 'id'>, requesterRole?: string): Promise<number> {
+    const defaultRole = await this.rolePort.getRoleByName('user');
+    if (!defaultRole) {
+      throw new BusinessError('El rol por defecto no existe', 500);
+    }
+
+    const isAdminRequester = requesterRole === 'admin';
+    if (!isAdminRequester || user.roleId == null) {
+      user.roleId = defaultRole.id;
+    } else {
       const role = await this.rolePort.getRoleById(user.roleId);
       if (!role) throw new BusinessError('El rol indicado no existe', 404);
     }
+
     const existsUser = await this.port.getUserByEmail(user.email);
     if (existsUser) throw new BusinessError('El email ya esta registrado', 409);
     user.password = await bcrypt.hash(user.password, 12);
@@ -46,6 +55,12 @@ export class UserApplication {
       const other = await this.port.getUserByEmail(user.email);
       if (other && other.id !== id) {
         throw new BusinessError('El email ya esta registrado', 409);
+      }
+    }
+    if (user.roleId != null && user.roleId !== existing.roleId) {
+      const role = await this.rolePort.getRoleById(user.roleId);
+      if (!role) {
+        throw new BusinessError('El rol indicado no existe', 404);
       }
     }
     // Si llega una contrasena nueva, se vuelve a hashear.

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserApplication } from '../../application/user.application';
+import { AuthApplication } from '../../application/auth.application';
 import { User } from '../../domain/entities/user';
 import { validateUserData } from '../util/user-validation';
 import { validateUserUpdate } from '../util/user-update-validation';
@@ -22,7 +23,8 @@ export class UserController {
     try {
       const { error, value } = validateUserData(req.body);
       if (error) return res.status(400).json({ message: error.message });
-      const userId = await this.app.createUser(value as any);
+      const requesterRole = this.getRequesterRole(req);
+      const userId = await this.app.createUser(value as any, requesterRole);
       return res.status(201).json({ message: 'Usuario creado con exito', userId });
     } catch (error) {
       return handleError(res, error);
@@ -83,6 +85,10 @@ export class UserController {
         return res.status(403).json({ message: 'Solo puedes modificar tu propio perfil' });
       }
 
+      if (requester?.role !== 'admin' && Object.prototype.hasOwnProperty.call(req.body, 'roleId')) {
+        return res.status(403).json({ message: 'No puedes modificar el rol de tu cuenta' });
+      }
+
       const { error, value } = validateUserUpdate(req.body);
       if (error) return res.status(400).json({ message: error.message });
 
@@ -107,6 +113,19 @@ export class UserController {
       return res.status(200).json({ message: 'Usuario dado de baja' });
     } catch (error) {
       return handleError(res, error);
+    }
+  }
+
+  private getRequesterRole(req: Request): string | undefined {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return undefined;
+
+    const token = authHeader.slice('Bearer '.length);
+    try {
+      const payload = AuthApplication.verifyToken(token);
+      return typeof payload === 'object' && payload !== null ? (payload as any).role : undefined;
+    } catch {
+      return undefined;
     }
   }
 }
