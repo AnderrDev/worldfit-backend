@@ -75,6 +75,15 @@ export class GoalAdapter implements GoalPort {
     }
   }
 
+  async getGoalByName(name: string): Promise<GoalDomain | null> {
+    try {
+      const goal = await this.goalRepository.findOne({ where: { name_goal: name, status_goal: 1 } });
+      return goal ? this.toDomain(goal) : null;
+    } catch (error) {
+      throw new Error('Error al obtener el objetivo');
+    }
+  }
+
   async getAllGoals(): Promise<GoalDomain[]> {
     try {
       const goals = await this.goalRepository.find({ where: { status_goal: 1 } });

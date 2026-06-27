@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { GoalApplication } from '../../application/goal.application';
 import { validateGoalData } from '../util/goal-validation';
 import { validateGoalUpdate } from '../util/goal-update-validation';
+import { BusinessError } from '../../shared/business-error';
 
 export class GoalController {
   private app: GoalApplication;
@@ -19,8 +20,8 @@ export class GoalController {
       const goalId = await this.app.createGoal(value);
       return res.status(201).json({ message: 'Objetivo creado con exito', goalId });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ message: error.message });
+      if (error instanceof BusinessError) {
+        return res.status(error.status).json({ message: error.message });
       }
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
@@ -61,12 +62,12 @@ export class GoalController {
       if (error) {
         return res.status(400).json({ message: error.message });
       }
-      const updated = await this.app.updateGoal(id, value);
-      if (!updated) {
-        return res.status(404).json({ message: 'Objetivo no encontrado o sin cambios' });
-      }
+      await this.app.updateGoal(id, value);
       return res.status(200).json({ message: 'Objetivo actualizado correctamente' });
     } catch (error) {
+      if (error instanceof BusinessError) {
+        return res.status(error.status).json({ message: error.message });
+      }
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
   }
@@ -77,12 +78,12 @@ export class GoalController {
       if (isNaN(id)) {
         return res.status(400).json({ message: 'ID invalido' });
       }
-      const deleted = await this.app.deleteGoal(id);
-      if (!deleted) {
-        return res.status(404).json({ message: 'Objetivo no encontrado' });
-      }
+      await this.app.deleteGoal(id);
       return res.status(200).json({ message: 'Objetivo dado de baja' });
     } catch (error) {
+      if (error instanceof BusinessError) {
+        return res.status(error.status).json({ message: error.message });
+      }
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
   }

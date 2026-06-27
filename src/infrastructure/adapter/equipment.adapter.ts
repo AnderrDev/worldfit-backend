@@ -75,6 +75,15 @@ export class EquipmentAdapter implements EquipmentPort {
     }
   }
 
+  async getEquipmentByName(name: string): Promise<EquipmentDomain | null> {
+    try {
+      const equipment = await this.equipmentRepository.findOne({ where: { name_equipment: name, status_equipment: 1 } });
+      return equipment ? this.toDomain(equipment) : null;
+    } catch (error) {
+      throw new Error('Error al obtener el equipamiento');
+    }
+  }
+
   async getAllEquipment(): Promise<EquipmentDomain[]> {
     try {
       const equipment = await this.equipmentRepository.find({ where: { status_equipment: 1 } });

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { RoutineAdapter } from '../adapter/routine.adapter';
 import { UserAdapter } from '../adapter/user.adapter';
+import { ExerciseAdapter } from '../adapter/exercise.adapter';
 import { RoutineApplication } from '../../application/routine.application';
 import { RoutineController } from '../controller/routine.controller';
 import { authenticateToken, requireAdmin } from '../web/auth.middleware';
@@ -8,10 +9,12 @@ import { authenticateToken, requireAdmin } from '../web/auth.middleware';
 const router = Router();
 
 // Cadena de inyeccion de dependencias: adapter -> application -> controller.
-// RoutineApplication tambien recibe el puerto de usuarios (reglas de asignacion).
+// RoutineApplication recibe ademas los puertos de usuarios y ejercicios
+// (reglas de asignacion y validacion de ejercicios).
 const routineAdapter = new RoutineAdapter();
 const userAdapter = new UserAdapter();
-const routineApplication = new RoutineApplication(routineAdapter, userAdapter);
+const exerciseAdapter = new ExerciseAdapter();
+const routineApplication = new RoutineApplication(routineAdapter, userAdapter, exerciseAdapter);
 const routineController = new RoutineController(routineApplication);
 
 // Consultas: cualquier usuario autenticado (JWT).

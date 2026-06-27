@@ -75,6 +75,15 @@ export class CategoryAdapter implements CategoryPort {
     }
   }
 
+  async getCategoryByName(name: string): Promise<CategoryDomain | null> {
+    try {
+      const category = await this.categoryRepository.findOne({ where: { name_category: name, status_category: 1 } });
+      return category ? this.toDomain(category) : null;
+    } catch (error) {
+      throw new Error('Error al obtener la categoria');
+    }
+  }
+
   async getAllCategories(): Promise<CategoryDomain[]> {
     try {
       const categories = await this.categoryRepository.find({ where: { status_category: 1 } });

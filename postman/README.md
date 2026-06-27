@@ -34,7 +34,7 @@ Colección lista para importar: `WorldFit.postman_collection.json`.
 
 | Variable | Valor por defecto |
 |---|---|
-| `baseUrl` | `http://localhost:4000/api` |
+| `baseUrl` | `http://localhost:4000/api/v1` |
 | `adminToken` | se rellena al hacer Login Admin |
 | `userToken` | se rellena al hacer Login Demo |
 

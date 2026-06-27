@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { CategoryApplication } from '../../application/category.application';
 import { validateCategoryData } from '../util/category-validation';
 import { validateCategoryUpdate } from '../util/category-update-validation';
+import { BusinessError } from '../../shared/business-error';
 
 export class CategoryController {
   private app: CategoryApplication;
@@ -19,8 +20,8 @@ export class CategoryController {
       const categoryId = await this.app.createCategory(value);
       return res.status(201).json({ message: 'Categoria creada con exito', categoryId });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ message: error.message });
+      if (error instanceof BusinessError) {
+        return res.status(error.status).json({ message: error.message });
       }
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
@@ -61,12 +62,12 @@ export class CategoryController {
       if (error) {
         return res.status(400).json({ message: error.message });
       }
-      const updated = await this.app.updateCategory(id, value);
-      if (!updated) {
-        return res.status(404).json({ message: 'Categoria no encontrada o sin cambios' });
-      }
+      await this.app.updateCategory(id, value);
       return res.status(200).json({ message: 'Categoria actualizada correctamente' });
     } catch (error) {
+      if (error instanceof BusinessError) {
+        return res.status(error.status).json({ message: error.message });
+      }
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
   }
@@ -77,12 +78,12 @@ export class CategoryController {
       if (isNaN(id)) {
         return res.status(400).json({ message: 'ID invalido' });
       }
-      const deleted = await this.app.deleteCategory(id);
-      if (!deleted) {
-        return res.status(404).json({ message: 'Categoria no encontrada' });
-      }
+      await this.app.deleteCategory(id);
       return res.status(200).json({ message: 'Categoria dada de baja' });
     } catch (error) {
+      if (error instanceof BusinessError) {
+        return res.status(error.status).json({ message: error.message });
+      }
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
   }

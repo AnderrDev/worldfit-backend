@@ -10,6 +10,8 @@ export type EnvironmentVars = {
   DB_NAME: string;
   DB_SCHEMA: string;
   JWT_SECRET: string;
+  API_PREFIX: string;
+  API_VERSION: string;
 };
 
 type ValidationEnvironmentVars = {
@@ -27,6 +29,9 @@ function validateEnvVars(vars: NodeJS.ProcessEnv): ValidationEnvironmentVars {
     DB_NAME: Joi.string().required(),
     DB_SCHEMA: Joi.string().required(),
     JWT_SECRET: Joi.string().min(32).required(),
+    // Versionado de la API (URI versioning). Por defecto: /api/v1
+    API_PREFIX: Joi.string().default('/api'),
+    API_VERSION: Joi.string().default('v1'),
   }).unknown(true);
 
   const { error, value } = schema.validate(vars);

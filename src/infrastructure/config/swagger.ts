@@ -1,7 +1,12 @@
 // Especificacion OpenAPI (Swagger) de la API WorldFit.
-// Se sirve con swagger-ui-express en GET /api/docs.
+// Se sirve con swagger-ui-express en GET {API_PREFIX}/docs.
+
+import { ENV } from './environment-vars';
 
 const bearerAuth = [{ bearerAuth: [] }];
+
+// Ruta base versionada que usan todos los endpoints (ej. /api/v1).
+const API_BASE = `${ENV.API_PREFIX}/${ENV.API_VERSION}`;
 
 // Operaciones CRUD genericas para los catalogos (name/description/status).
 function catalogPaths(resource: string, tag: string, singular: string) {
@@ -62,7 +67,7 @@ export const swaggerSpec = {
       'API REST de WorldFit (Node + Express + TypeORM + PostgreSQL, arquitectura hexagonal). ' +
       'Para endpoints protegidos: haz login, copia el token y pulsa "Authorize".',
   },
-  servers: [{ url: '/api', description: 'Servidor local' }],
+  servers: [{ url: API_BASE, description: 'Servidor local (versionado)' }],
   components: {
     securitySchemes: {
       bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },

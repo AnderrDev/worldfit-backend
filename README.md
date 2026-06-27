@@ -137,37 +137,42 @@ Puedes probar todos los endpoints desde ahí. Para los protegidos: ejecuta
 `POST /login`, copia el `token`, pulsa **Authorize** (arriba a la derecha),
 pega el token y ya puedes lanzar el resto de peticiones.
 
-## Endpoints (prefijo `/api`)
+## Endpoints (base versionada `/api/v1`)
+
+> **Versionado de la API (URI versioning).** Todos los endpoints de negocio cuelgan
+> de una base configurable por entorno: `{API_PREFIX}/{API_VERSION}` (por defecto
+> `/api/v1`). Para cambiar de versión basta con cambiar `API_VERSION` en el `.env`.
+> La documentación Swagger se sirve en `{API_PREFIX}/docs` (`/api/docs`).
 
 ### Users
 | Método | Ruta | Protegido | Descripción |
 |---|---|---|---|
-| POST | `/api/users` | No | Crear usuario |
-| POST | `/api/login` | No | Login (devuelve JWT) |
-| GET | `/api/users` | Sí | Listar usuarios |
-| GET | `/api/users/:id` | Sí | Obtener por id |
-| GET | `/api/users/email/:email` | Sí | Obtener por email |
-| PUT | `/api/users/:id` | Sí | Actualizar |
-| DELETE | `/api/users/:id` | Sí | Baja lógica (status = 0) |
+| POST | `/api/v1/users` | No | Crear usuario |
+| POST | `/api/v1/login` | No | Login (devuelve JWT) |
+| GET | `/api/v1/users` | Sí | Listar usuarios |
+| GET | `/api/v1/users/:id` | Sí | Obtener por id |
+| GET | `/api/v1/users/email/:email` | Sí | Obtener por email |
+| PUT | `/api/v1/users/:id` | Sí | Actualizar |
+| DELETE | `/api/v1/users/:id` | Sí | Baja lógica (status = 0) |
 
-### Exercises (todas protegidas con JWT)
-`POST /api/exercises` · `GET /api/exercises` · `GET /api/exercises/:id` · `PUT /api/exercises/:id` · `DELETE /api/exercises/:id`
+### Exercises (GET con JWT · POST/PUT/DELETE solo admin)
+`POST /api/v1/exercises` · `GET /api/v1/exercises` · `GET /api/v1/exercises/:id` · `PUT /api/v1/exercises/:id` · `DELETE /api/v1/exercises/:id`
 
 ### Routines (GET con JWT · POST/PUT/DELETE solo admin)
-`POST /api/routines` · `GET /api/routines` · `GET /api/routines/:id` · `PUT /api/routines/:id` · `DELETE /api/routines/:id`
+`POST /api/v1/routines` · `GET /api/v1/routines` · `GET /api/v1/routines/:id` · `PUT /api/v1/routines/:id` · `DELETE /api/v1/routines/:id`
 
 ### Categories / Equipment / Goals (catálogos · GET con JWT · POST/PUT/DELETE solo admin)
-- `/api/categories` · `/api/categories/:id`
-- `/api/equipment` · `/api/equipment/:id`
-- `/api/goals` · `/api/goals/:id`
+- `/api/v1/categories` · `/api/v1/categories/:id`
+- `/api/v1/equipment` · `/api/v1/equipment/:id`
+- `/api/v1/goals` · `/api/v1/goals/:id`
 
 > Total: **6 CRUD completos** (Users, Exercises, Routines, Categories, Equipment, Goals)
 > con borrado lógico. Patrón de diseño: ver `PATRON-DISENO.md`.
 
 ### Lógica de negocio — flujo de aprobación de rutina
 Una rutina asignada tiene un estado de aprobación: `pending` → `accepted` / `rejected`.
-- `PATCH /api/routines/:id/accept` — el usuario asignado acepta su rutina.
-- `PATCH /api/routines/:id/reject` — el usuario asignado la rechaza.
+- `PATCH /api/v1/routines/:id/accept` — el usuario asignado acepta su rutina.
+- `PATCH /api/v1/routines/:id/reject` — el usuario asignado la rechaza.
 - Reglas: solo el **usuario asignado** puede decidir (403 si no lo es); no se puede
   decidir dos veces (409 si ya está aceptada/rechazada).
 
