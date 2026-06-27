@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { CategoryApplication } from '../../application/category.application';
 import { validateCategoryData } from '../util/category-validation';
 import { validateCategoryUpdate } from '../util/category-update-validation';
-import { BusinessError } from '../../shared/business-error';
+import { handleError, parseId } from '../web/http-response';
 
 export class CategoryController {
   private app: CategoryApplication;
@@ -20,10 +20,7 @@ export class CategoryController {
       const categoryId = await this.app.createCategory(value);
       return res.status(201).json({ message: 'Categoria creada con exito', categoryId });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
@@ -32,14 +29,14 @@ export class CategoryController {
       const categories = await this.app.getAllCategories();
       return res.status(200).json(categories);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async getCategoryById(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const category = await this.app.getCategoryById(id);
@@ -48,14 +45,14 @@ export class CategoryController {
       }
       return res.status(200).json(category);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async updateCategory(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const { error, value } = validateCategoryUpdate(req.body);
@@ -65,26 +62,20 @@ export class CategoryController {
       await this.app.updateCategory(id, value);
       return res.status(200).json({ message: 'Categoria actualizada correctamente' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
   async deleteCategory(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       await this.app.deleteCategory(id);
       return res.status(200).json({ message: 'Categoria dada de baja' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 }

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { EquipmentApplication } from '../../application/equipment.application';
 import { validateEquipmentData } from '../util/equipment-validation';
 import { validateEquipmentUpdate } from '../util/equipment-update-validation';
-import { BusinessError } from '../../shared/business-error';
+import { handleError, parseId } from '../web/http-response';
 
 export class EquipmentController {
   private app: EquipmentApplication;
@@ -20,10 +20,7 @@ export class EquipmentController {
       const equipmentId = await this.app.createEquipment(value);
       return res.status(201).json({ message: 'Equipamiento creado con exito', equipmentId });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
@@ -32,14 +29,14 @@ export class EquipmentController {
       const equipment = await this.app.getAllEquipment();
       return res.status(200).json(equipment);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async getEquipmentById(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const equipment = await this.app.getEquipmentById(id);
@@ -48,14 +45,14 @@ export class EquipmentController {
       }
       return res.status(200).json(equipment);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async updateEquipment(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const { error, value } = validateEquipmentUpdate(req.body);
@@ -65,26 +62,20 @@ export class EquipmentController {
       await this.app.updateEquipment(id, value);
       return res.status(200).json({ message: 'Equipamiento actualizado correctamente' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
   async deleteEquipment(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       await this.app.deleteEquipment(id);
       return res.status(200).json({ message: 'Equipamiento dado de baja' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 }

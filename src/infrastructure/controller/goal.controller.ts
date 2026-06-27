@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { GoalApplication } from '../../application/goal.application';
 import { validateGoalData } from '../util/goal-validation';
 import { validateGoalUpdate } from '../util/goal-update-validation';
-import { BusinessError } from '../../shared/business-error';
+import { handleError, parseId } from '../web/http-response';
 
 export class GoalController {
   private app: GoalApplication;
@@ -20,10 +20,7 @@ export class GoalController {
       const goalId = await this.app.createGoal(value);
       return res.status(201).json({ message: 'Objetivo creado con exito', goalId });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
@@ -32,14 +29,14 @@ export class GoalController {
       const goals = await this.app.getAllGoals();
       return res.status(200).json(goals);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async getGoalById(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const goal = await this.app.getGoalById(id);
@@ -48,14 +45,14 @@ export class GoalController {
       }
       return res.status(200).json(goal);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async updateGoal(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const { error, value } = validateGoalUpdate(req.body);
@@ -65,26 +62,20 @@ export class GoalController {
       await this.app.updateGoal(id, value);
       return res.status(200).json({ message: 'Objetivo actualizado correctamente' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
   async deleteGoal(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       await this.app.deleteGoal(id);
       return res.status(200).json({ message: 'Objetivo dado de baja' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 }

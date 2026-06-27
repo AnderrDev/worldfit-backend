@@ -44,6 +44,23 @@ export class App {
     this.app.use(API_BASE, categoryRoutes);
     this.app.use(API_BASE, equipmentRoutes);
     this.app.use(API_BASE, goalRoutes);
+
+    // Red de seguridad 1: ruta no encontrada -> 404 en JSON (no el HTML de Express).
+    this.app.use((_req, res) => {
+      res.status(404).json({ message: 'Ruta no encontrada' });
+    });
+
+    // Red de seguridad 2: manejador de errores global (errores no controlados,
+    // p. ej. JSON malformado en el body).
+    this.app.use(
+      (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+        if (err?.type === 'entity.parse.failed') {
+          return res.status(400).json({ message: 'El cuerpo de la peticion no es un JSON valido' });
+        }
+        console.error('[error]', err);
+        return res.status(500).json({ message: 'Error interno del servidor' });
+      },
+    );
   }
 
   getApp(): express.Application {

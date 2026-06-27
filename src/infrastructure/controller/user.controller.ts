@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { UserApplication } from '../../application/user.application';
 import { validateUserData } from '../util/user-validation';
 import { validateUserUpdate } from '../util/user-update-validation';
-import { BusinessError } from '../../shared/business-error';
+import { handleError, parseId } from '../web/http-response';
 
 export class UserController {
   private app: UserApplication;
@@ -20,13 +20,7 @@ export class UserController {
       const userId = await this.app.createUser(value as any);
       return res.status(201).json({ message: 'Usuario creado con exito', userId });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      if (error instanceof Error) {
-        return res.status(500).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
@@ -39,6 +33,7 @@ export class UserController {
       const token = await this.app.login(email, password);
       return res.status(200).json({ message: 'Login exitoso', token });
     } catch (error) {
+      // Por seguridad no se distingue el motivo: credenciales invalidas.
       return res.status(401).json({ message: 'Credenciales invalidas' });
     }
   }
@@ -48,14 +43,14 @@ export class UserController {
       const users = await this.app.getAllUsers();
       return res.status(200).json(users);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async getUserById(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const user = await this.app.getUserById(id);
@@ -64,63 +59,49 @@ export class UserController {
       }
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async getUserByEmail(req: Request, res: Response): Promise<Response> {
     try {
-      const email = req.params.email;
-      const user = await this.app.getUserByEmail(email);
+      const user = await this.app.getUserByEmail(req.params.email);
       if (!user) {
         return res.status(404).json({ message: 'Usuario no encontrado' });
       }
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: 'Error en la consulta de datos' });
+      return handleError(res, error);
     }
   }
 
   async updateUser(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
       const { error, value } = validateUserUpdate(req.body);
       if (error) {
         return res.status(400).json({ message: error.message });
       }
-      const updated = await this.app.updateUser(id, value as any);
-      if (!updated) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
+      await this.app.updateUser(id, value as any);
       return res.status(200).json({ message: 'Usuario actualizado correctamente' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 
-  // Dar de baja = actualizar el status a 0 (lo resuelve el adaptador)
   async deleteUser(req: Request, res: Response): Promise<Response> {
     try {
-      const id = Number(req.params.id);
-      if (isNaN(id)) {
+      const id = parseId(req.params.id);
+      if (id === null) {
         return res.status(400).json({ message: 'ID invalido' });
       }
-      const deleted = await this.app.deleteUser(id);
-      if (!deleted) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
+      await this.app.deleteUser(id);
       return res.status(200).json({ message: 'Usuario dado de baja' });
     } catch (error) {
-      if (error instanceof BusinessError) {
-        return res.status(error.status).json({ message: error.message });
-      }
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return handleError(res, error);
     }
   }
 }
