@@ -127,6 +127,16 @@ npm run build
 npm start
 ```
 
+## Documentación interactiva (Swagger)
+
+Con la API corriendo, abre en el navegador:
+```
+http://localhost:4000/api/docs
+```
+Puedes probar todos los endpoints desde ahí. Para los protegidos: ejecuta
+`POST /login`, copia el `token`, pulsa **Authorize** (arriba a la derecha),
+pega el token y ya puedes lanzar el resto de peticiones.
+
 ## Endpoints (prefijo `/api`)
 
 ### Users

@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from '../config/swagger';
 import userRoutes from '../routes/user.routes';
 import exerciseRoutes from '../routes/exercise.routes';
 import routineRoutes from '../routes/routine.routes';
@@ -26,6 +28,9 @@ export class App {
     this.app.get('/api/health', (_req, res) => {
       res.status(200).json({ status: 'ok', service: 'worldfit-backend' });
     });
+
+    // Documentacion interactiva (Swagger UI) en /api/docs.
+    this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     this.app.use('/api', userRoutes);
     this.app.use('/api', exerciseRoutes);
