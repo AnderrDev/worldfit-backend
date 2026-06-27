@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { UserPort } from '../domain/user.port';
 import { User } from '../domain/entities/user';
 import { AuthApplication } from './auth.application';
+import { BusinessError } from '../shared/business-error';
 
 export class UserApplication {
   private port: UserPort;
@@ -14,7 +15,7 @@ export class UserApplication {
     // Regla de negocio: el email no debe existir antes de crear.
     const existsUser = await this.port.getUserByEmail(user.email);
     if (existsUser) {
-      throw new Error('El email ya esta registrado');
+      throw new BusinessError('El email ya esta registrado', 409);
     }
     // Regla de negocio: la contrasena se guarda hasheada.
     user.password = await bcrypt.hash(user.password, 12);
@@ -32,6 +33,18 @@ export class UserApplication {
   }
 
   async updateUser(id: number, user: Partial<User>): Promise<boolean> {
+    // Regla: el usuario debe existir (y estar activo) antes de actualizar.
+    const existing = await this.port.getUserById(id);
+    if (!existing) {
+      throw new BusinessError('Usuario no encontrado', 404);
+    }
+    // Regla: si cambia el email, no debe pertenecer a otro usuario.
+    if (user.email && user.email !== existing.email) {
+      const other = await this.port.getUserByEmail(user.email);
+      if (other && other.id !== id) {
+        throw new BusinessError('El email ya esta registrado', 409);
+      }
+    }
     // Si llega una contrasena nueva, se vuelve a hashear.
     if (user.password) {
       user.password = await bcrypt.hash(user.password, 12);
@@ -40,6 +53,11 @@ export class UserApplication {
   }
 
   async deleteUser(id: number): Promise<boolean> {
+    // Regla: el usuario debe existir (y estar activo) antes de darlo de baja.
+    const existing = await this.port.getUserById(id);
+    if (!existing) {
+      throw new BusinessError('Usuario no encontrado', 404);
+    }
     return this.port.deleteUser(id);
   }
 
