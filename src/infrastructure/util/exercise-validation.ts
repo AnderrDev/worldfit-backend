@@ -1,11 +1,13 @@
 import Joi from 'joi';
 
 export type ExerciseData = {
+  categoryId: number;
   name: string;
   description: string;
   muscleGroup: string;
   sets: number;
   reps: number;
+  isActive: boolean;
 };
 
 type ValidationExerciseData = {
@@ -17,6 +19,12 @@ const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core', 'fu
 
 export function validateExerciseData(data: any): ValidationExerciseData {
   const schema = Joi.object({
+    categoryId: Joi.number().integer().min(1).required().messages({
+      'number.base': 'El ID de categoria debe ser un numero',
+      'number.integer': 'El ID de categoria debe ser un numero entero',
+      'number.min': 'El ID de categoria debe ser mayor a 0',
+      'any.required': 'El ID de categoria es obligatorio',
+    }),
     name: Joi.string().trim().min(3).required().messages({
       'string.empty': 'El nombre del ejercicio es obligatorio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
@@ -41,6 +49,9 @@ export function validateExerciseData(data: any): ValidationExerciseData {
       'number.integer': 'Las repeticiones deben ser un numero entero',
       'number.min': 'Las repeticiones deben ser al menos 1',
       'any.required': 'Las repeticiones son obligatorias',
+    }),
+    isActive: Joi.boolean().default(true).messages({
+      'boolean.base': 'El estado debe ser verdadero o falso',
     }),
   });
 

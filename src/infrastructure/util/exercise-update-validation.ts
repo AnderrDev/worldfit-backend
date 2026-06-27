@@ -2,9 +2,12 @@ import Joi from 'joi';
 
 const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core', 'fullbody'];
 
-// Validacion parcial para actualizar un ejercicio.
 export function validateExerciseUpdate(data: any) {
   const schema = Joi.object({
+    categoryId: Joi.number().integer().min(1).messages({
+      'number.base': 'El ID de categoria debe ser un numero',
+      'number.min': 'El ID de categoria debe ser mayor a 0',
+    }),
     name: Joi.string().trim().min(3).messages({
       'string.empty': 'El nombre no puede estar vacio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
@@ -22,6 +25,9 @@ export function validateExerciseUpdate(data: any) {
     reps: Joi.number().integer().min(1).messages({
       'number.base': 'Las repeticiones deben ser un numero',
       'number.min': 'Las repeticiones deben ser al menos 1',
+    }),
+    isActive: Joi.boolean().messages({
+      'boolean.base': 'El estado debe ser verdadero o falso',
     }),
   })
     .min(1)

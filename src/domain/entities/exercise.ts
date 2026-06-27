@@ -1,4 +1,3 @@
-// Modelo de dominio del ejercicio (NO depende de TypeORM ni de Express).
 export type MuscleGroup =
   | 'chest'
   | 'back'
@@ -10,9 +9,14 @@ export type MuscleGroup =
 
 export interface Exercise {
   id: number;
+  categoryId: number;
+  categoryName?: string;
   name: string;
   description: string;
   muscleGroup: MuscleGroup;
   sets: number;
   reps: number;
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

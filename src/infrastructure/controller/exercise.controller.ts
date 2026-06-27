@@ -14,9 +14,7 @@ export class ExerciseController {
   async createExercise(req: Request, res: Response): Promise<Response> {
     try {
       const { error, value } = validateExerciseData(req.body);
-      if (error) {
-        return res.status(400).json({ message: error.message });
-      }
+      if (error) return res.status(400).json({ message: error.message });
       const exerciseId = await this.app.createExercise(value as any);
       return res.status(201).json({ message: 'Ejercicio creado con exito', exerciseId });
     } catch (error) {
@@ -26,8 +24,7 @@ export class ExerciseController {
 
   async getAllExercises(_req: Request, res: Response): Promise<Response> {
     try {
-      const exercises = await this.app.getAllExercises();
-      return res.status(200).json(exercises);
+      return res.status(200).json(await this.app.getAllExercises());
     } catch (error) {
       return handleError(res, error);
     }
@@ -36,13 +33,9 @@ export class ExerciseController {
   async getExerciseById(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseId(req.params.id);
-      if (id === null) {
-        return res.status(400).json({ message: 'ID invalido' });
-      }
+      if (id === null) return res.status(400).json({ message: 'ID invalido' });
       const exercise = await this.app.getExerciseById(id);
-      if (!exercise) {
-        return res.status(404).json({ message: 'Ejercicio no encontrado' });
-      }
+      if (!exercise) return res.status(404).json({ message: 'Ejercicio no encontrado' });
       return res.status(200).json(exercise);
     } catch (error) {
       return handleError(res, error);
@@ -52,17 +45,11 @@ export class ExerciseController {
   async updateExercise(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseId(req.params.id);
-      if (id === null) {
-        return res.status(400).json({ message: 'ID invalido' });
-      }
+      if (id === null) return res.status(400).json({ message: 'ID invalido' });
       const { error, value } = validateExerciseUpdate(req.body);
-      if (error) {
-        return res.status(400).json({ message: error.message });
-      }
+      if (error) return res.status(400).json({ message: error.message });
       const updated = await this.app.updateExercise(id, value as any);
-      if (!updated) {
-        return res.status(404).json({ message: 'Ejercicio no encontrado' });
-      }
+      if (!updated) return res.status(404).json({ message: 'Ejercicio no encontrado' });
       return res.status(200).json({ message: 'Ejercicio actualizado correctamente' });
     } catch (error) {
       return handleError(res, error);
@@ -72,14 +59,27 @@ export class ExerciseController {
   async deleteExercise(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseId(req.params.id);
-      if (id === null) {
-        return res.status(400).json({ message: 'ID invalido' });
-      }
+      if (id === null) return res.status(400).json({ message: 'ID invalido' });
       const deleted = await this.app.deleteExercise(id);
-      if (!deleted) {
-        return res.status(404).json({ message: 'Ejercicio no encontrado' });
-      }
+      if (!deleted) return res.status(404).json({ message: 'Ejercicio no encontrado' });
       return res.status(200).json({ message: 'Ejercicio dado de baja' });
+    } catch (error) {
+      return handleError(res, error);
+    }
+  }
+
+  async getExercisesByMuscle(req: Request, res: Response): Promise<Response> {
+    try {
+      const { muscle } = req.query;
+      if (!muscle || typeof muscle !== 'string') {
+        return res.status(400).json({ message: 'Parametro muscle requerido' });
+      }
+
+      const exercises = await this.app.getAllExercises();
+      const filtered = exercises.filter((exercise) =>
+        exercise.muscleGroup.toLowerCase().includes(muscle.toLowerCase()),
+      );
+      return res.status(200).json(filtered);
     } catch (error) {
       return handleError(res, error);
     }
