@@ -16,9 +16,10 @@ const exerciseItemSchema = Joi.object({
 
 export function validateRoutineUpdate(data: any) {
   const schema = Joi.object({
-    name: Joi.string().trim().min(3).messages({
+    name: Joi.string().trim().min(3).max(255).messages({
       'string.empty': 'El nombre no puede estar vacio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
+      'string.max': 'El nombre no puede superar los 255 caracteres',
     }),
     description: Joi.string().trim().allow('').max(500).messages({
       'string.max': 'La descripcion no puede superar los 500 caracteres',

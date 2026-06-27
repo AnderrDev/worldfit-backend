@@ -25,9 +25,10 @@ export function validateExerciseData(data: any): ValidationExerciseData {
       'number.min': 'El ID de categoria debe ser mayor a 0',
       'any.required': 'El ID de categoria es obligatorio',
     }),
-    name: Joi.string().trim().min(3).required().messages({
+    name: Joi.string().trim().min(3).max(255).required().messages({
       'string.empty': 'El nombre del ejercicio es obligatorio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
+      'string.max': 'El nombre no puede superar los 255 caracteres',
       'any.required': 'El nombre del ejercicio es obligatorio',
     }),
     description: Joi.string().trim().allow('').max(500).default('').messages({

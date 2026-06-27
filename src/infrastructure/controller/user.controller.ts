@@ -109,6 +109,10 @@ export class UserController {
         return res.status(403).json({ message: 'Solo puedes dar de baja tu propio usuario' });
       }
 
+      if (requester?.role === 'admin' && requester?.id === id) {
+        return res.status(403).json({ message: 'Un administrador no puede darse de baja a si mismo' });
+      }
+
       await this.app.deleteUser(id);
       return res.status(200).json({ message: 'Usuario dado de baja' });
     } catch (error) {

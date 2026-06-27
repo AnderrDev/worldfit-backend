@@ -2,9 +2,10 @@ import Joi from 'joi';
 
 export function validateUserUpdate(data: any) {
   const schema = Joi.object({
-    name: Joi.string().trim().min(3).pattern(/^[a-zA-ZÀ-ÿ\s]+$/).messages({
+    name: Joi.string().trim().min(3).max(255).pattern(/^[a-zA-ZÀ-ÿ\s]+$/).messages({
       'string.empty': 'El nombre no puede estar vacio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
+      'string.max': 'El nombre no puede superar los 255 caracteres',
       'string.pattern.base': 'El nombre solo puede contener letras y espacios',
     }),
     email: Joi.string().email().messages({

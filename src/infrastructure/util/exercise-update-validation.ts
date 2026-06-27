@@ -8,9 +8,10 @@ export function validateExerciseUpdate(data: any) {
       'number.base': 'El ID de categoria debe ser un numero',
       'number.min': 'El ID de categoria debe ser mayor a 0',
     }),
-    name: Joi.string().trim().min(3).messages({
+    name: Joi.string().trim().min(3).max(255).messages({
       'string.empty': 'El nombre no puede estar vacio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
+      'string.max': 'El nombre no puede superar los 255 caracteres',
     }),
     description: Joi.string().trim().allow('').max(500).messages({
       'string.max': 'La descripcion no puede superar los 500 caracteres',

@@ -69,15 +69,22 @@ export class ExerciseController {
   }
 
   async getExercisesByMuscle(req: Request, res: Response): Promise<Response> {
+    const VALID_MUSCLE_GROUPS = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core', 'fullbody'];
+
     try {
-      const { muscle } = req.query;
-      if (!muscle || typeof muscle !== 'string') {
-        return res.status(400).json({ message: 'Parametro muscle requerido' });
+      const { muscleGroup } = req.query;
+      if (!muscleGroup || typeof muscleGroup !== 'string') {
+        return res.status(400).json({ message: 'Parametro muscleGroup requerido' });
+      }
+      if (!VALID_MUSCLE_GROUPS.includes(muscleGroup.toLowerCase())) {
+        return res.status(400).json({
+          message: `muscleGroup invalido. Valores permitidos: ${VALID_MUSCLE_GROUPS.join(', ')}`,
+        });
       }
 
       const exercises = await this.app.getAllExercises();
-      const filtered = exercises.filter((exercise) =>
-        exercise.muscleGroup.toLowerCase().includes(muscle.toLowerCase()),
+      const filtered = exercises.filter(
+        (exercise) => exercise.muscleGroup.toLowerCase() === muscleGroup.toLowerCase(),
       );
       return res.status(200).json(filtered);
     } catch (error) {

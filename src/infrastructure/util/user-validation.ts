@@ -15,10 +15,11 @@ type ValidationUserData = {
 
 export function validateUserData(data: any): ValidationUserData {
   const schema = Joi.object({
-    name: Joi.string().trim().min(3).pattern(/^[a-zA-ZÀ-ÿ\s]+$/).required().messages({
+    name: Joi.string().trim().min(3).max(255).pattern(/^[a-zA-ZÀ-ÿ\s]+$/).required().messages({
       'string.base': 'El nombre debe ser texto',
       'string.empty': 'El nombre es obligatorio',
       'string.min': 'El nombre debe tener al menos 3 caracteres',
+      'string.max': 'El nombre no puede superar los 255 caracteres',
       'string.pattern.base': 'El nombre solo puede contener letras y espacios',
       'any.required': 'El nombre es obligatorio',
     }),
