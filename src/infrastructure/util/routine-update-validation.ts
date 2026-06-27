@@ -2,7 +2,18 @@ import Joi from 'joi';
 
 const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'];
 
-// Validacion parcial para actualizar una rutina.
+const exerciseItemSchema = Joi.object({
+  exerciseId: Joi.number().integer().min(1).required().messages({
+    'number.base': 'El ID del ejercicio debe ser un numero',
+    'any.required': 'El ID del ejercicio es obligatorio',
+  }),
+  sets: Joi.number().integer().min(1).default(3),
+  repetitions: Joi.number().integer().min(1).default(10),
+  description: Joi.string().trim().allow('').max(500).default(''),
+  exerciseOrder: Joi.number().integer().min(1).default(1),
+  notes: Joi.string().trim().allow('').default(''),
+});
+
 export function validateRoutineUpdate(data: any) {
   const schema = Joi.object({
     name: Joi.string().trim().min(3).messages({
@@ -15,12 +26,17 @@ export function validateRoutineUpdate(data: any) {
     difficulty: Joi.string().valid(...DIFFICULTIES).messages({
       'any.only': `La dificultad debe ser una de: ${DIFFICULTIES.join(', ')}`,
     }),
-    exerciseIds: Joi.array().items(Joi.number().integer()).messages({
-      'array.base': 'Los ejercicios deben enviarse como una lista de ids',
+    durationMinutes: Joi.number().integer().min(1).messages({
+      'number.base': 'La duracion debe ser un numero',
+      'number.min': 'La duracion debe ser mayor a 0',
+    }),
+    exercises: Joi.array().items(exerciseItemSchema).messages({
+      'array.base': 'Los ejercicios deben enviarse como una lista',
     }),
     assignedUserId: Joi.number().integer().messages({
-      'number.base': 'El id del usuario asignado debe ser un numero',
+      'number.base': 'El ID del usuario asignado debe ser un numero',
     }),
+    isActive: Joi.boolean(),
   })
     .min(1)
     .messages({ 'object.min': 'Debe enviar al menos un campo para actualizar' });

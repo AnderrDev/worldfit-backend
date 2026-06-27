@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import { UserAdapter } from '../adapter/user.adapter';
+import { RoleAdapter } from '../adapter/role.adapter';
 import { UserApplication } from '../../application/user.application';
 import { UserController } from '../controller/user.controller';
 import { authenticateToken } from '../web/auth.middleware';
 
 const router = Router();
 
-// Cadena de inyeccion de dependencias: adapter -> application -> controller
 const userAdapter = new UserAdapter();
-const userApplication = new UserApplication(userAdapter);
+const roleAdapter = new RoleAdapter();
+const userApplication = new UserApplication(userAdapter, roleAdapter);
 const userController = new UserController(userApplication);
 
 // Rutas publicas

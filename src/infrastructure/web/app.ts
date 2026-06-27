@@ -3,6 +3,7 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from '../config/swagger';
 import { ENV } from '../config/environment-vars';
+import roleRoutes from '../routes/role.routes';
 import userRoutes from '../routes/user.routes';
 import exerciseRoutes from '../routes/exercise.routes';
 import routineRoutes from '../routes/routine.routes';
@@ -23,8 +24,12 @@ export class App {
   }
 
   private middlewares(): void {
-    this.app.use(express.json()); // necesario para leer el body de las peticiones
-    this.app.use(cors()); // permite consumir la API desde el front
+    this.app.use(express.json());
+    this.app.use(cors({
+      origin: process.env.CORS_ORIGIN || '*',
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }));
   }
 
   private routes(): void {
@@ -37,6 +42,7 @@ export class App {
     this.app.use(`${ENV.API_PREFIX}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     // Todos los recursos de negocio cuelgan de la ruta base versionada.
+    this.app.use(API_BASE, roleRoutes);
     this.app.use(API_BASE, userRoutes);
     this.app.use(API_BASE, exerciseRoutes);
     this.app.use(API_BASE, routineRoutes);

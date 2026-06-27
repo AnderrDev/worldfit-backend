@@ -1,23 +1,26 @@
 import bcrypt from 'bcryptjs';
 import { UserPort } from '../domain/user.port';
+import { RolePort } from '../domain/role.port';
 import { User } from '../domain/entities/user';
 import { AuthApplication } from './auth.application';
 import { BusinessError } from '../shared/business-error';
 
 export class UserApplication {
   private port: UserPort;
+  private rolePort: RolePort;
 
-  constructor(port: UserPort) {
+  constructor(port: UserPort, rolePort: RolePort) {
     this.port = port;
+    this.rolePort = rolePort;
   }
 
   async createUser(user: Omit<User, 'id'>): Promise<number> {
-    // Regla de negocio: el email no debe existir antes de crear.
-    const existsUser = await this.port.getUserByEmail(user.email);
-    if (existsUser) {
-      throw new BusinessError('El email ya esta registrado', 409);
+    if (user.roleId) {
+      const role = await this.rolePort.getRoleById(user.roleId);
+      if (!role) throw new BusinessError('El rol indicado no existe', 404);
     }
-    // Regla de negocio: la contrasena se guarda hasheada.
+    const existsUser = await this.port.getUserByEmail(user.email);
+    if (existsUser) throw new BusinessError('El email ya esta registrado', 409);
     user.password = await bcrypt.hash(user.password, 12);
     return this.port.createUser(user);
   }

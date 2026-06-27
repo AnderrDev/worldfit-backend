@@ -1,7 +1,6 @@
-// Modelo de dominio de la rutina (NO depende de TypeORM ni de Express).
-export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
+import { RoutineExerciseItem } from './routine-exercise';
 
-// Estado del flujo de aprobacion de la rutina asignada.
+export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 export type AssignmentStatus = 'pending' | 'accepted' | 'rejected';
 
 export interface Routine {
@@ -9,7 +8,11 @@ export interface Routine {
   name: string;
   description: string;
   difficulty: Difficulty;
-  exerciseIds: number[]; // ids de los ejercicios que componen la rutina
-  assignedUserId: number; // id del usuario al que se le asigna la rutina
-  assignmentStatus: AssignmentStatus; // pending -> accepted/rejected
+  durationMinutes?: number;
+  exercises?: RoutineExerciseItem[];
+  assignedUserId: number;
+  assignmentStatus: AssignmentStatus;
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

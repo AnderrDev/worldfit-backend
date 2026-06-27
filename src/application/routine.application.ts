@@ -22,13 +22,9 @@ export class RoutineApplication {
   }
 
   async createRoutine(routine: Omit<Routine, 'id'>): Promise<number> {
-    // Regla: el usuario asignado debe existir y estar activo.
     await this.validarUsuarioAsignado(routine.assignedUserId);
+    await this.validarEjercicios(routine.exercises?.map((e) => e.exerciseId) ?? []);
 
-    // Regla: todos los ejercicios indicados deben existir y estar activos.
-    await this.validarEjercicios(routine.exerciseIds);
-
-    // Regla: limite de rutinas activas por usuario.
     const activas = await this.port.countActiveRoutinesByUser(routine.assignedUserId);
     if (activas >= MAX_RUTINAS_ACTIVAS) {
       throw new BusinessError(
@@ -36,24 +32,20 @@ export class RoutineApplication {
       );
     }
 
-    // Toda rutina nueva nace pendiente de aprobacion.
     routine.assignmentStatus = 'pending';
     return this.port.createRoutine(routine);
   }
 
   async updateRoutine(id: number, routine: Partial<Routine>): Promise<boolean> {
-    // Regla: la rutina debe existir.
     const existing = await this.port.getRoutineById(id);
     if (!existing) {
       throw new BusinessError('Rutina no encontrada', 404);
     }
-    // Si se reasigna a otro usuario, validar que exista y este activo.
     if (routine.assignedUserId != null) {
       await this.validarUsuarioAsignado(routine.assignedUserId);
     }
-    // Si se cambian los ejercicios, validar que existan.
-    if (routine.exerciseIds != null) {
-      await this.validarEjercicios(routine.exerciseIds);
+    if (routine.exercises != null) {
+      await this.validarEjercicios(routine.exercises.map((e) => e.exerciseId));
     }
     return this.port.updateRoutine(id, routine);
   }
@@ -107,12 +99,12 @@ export class RoutineApplication {
     }
   }
 
-  private async validarEjercicios(exerciseIds: number[]): Promise<void> {
-    if (!exerciseIds || exerciseIds.length === 0) return;
-    for (const exId of exerciseIds) {
-      const exercise = await this.exercisePort.getExerciseById(exId);
+  private async validarEjercicios(ids: number[]): Promise<void> {
+    if (!ids || ids.length === 0) return;
+    for (const id of ids) {
+      const exercise = await this.exercisePort.getExerciseById(id);
       if (!exercise) {
-        throw new BusinessError(`El ejercicio con id ${exId} no existe o no esta activo`);
+        throw new BusinessError(`El ejercicio con id ${id} no existe o no esta activo`);
       }
     }
   }

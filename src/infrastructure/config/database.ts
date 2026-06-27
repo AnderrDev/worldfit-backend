@@ -1,10 +1,12 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
 import { ENV } from './environment-vars';
+import { Role } from '../entities/Role';
 import { User } from '../entities/User';
+import { Category } from '../entities/Category';
 import { Exercise } from '../entities/Exercise';
 import { Routine } from '../entities/Routine';
-import { Category } from '../entities/Category';
+import { RoutineExercise } from '../entities/RoutineExercise';
 import { Goal } from '../entities/Goal';
 
 export const AppDataSource = new DataSource({
@@ -17,7 +19,7 @@ export const AppDataSource = new DataSource({
   schema: ENV.DB_SCHEMA,
   synchronize: true, // SOLO en desarrollo; se quita en produccion
   logging: false,
-  entities: [User, Exercise, Routine, Category, Goal],
+  entities: [Role, User, Category, Exercise, Routine, RoutineExercise, Goal],
 });
 
 export async function connectDB(): Promise<void> {
@@ -26,7 +28,6 @@ export async function connectDB(): Promise<void> {
     console.log('Conectado a la base de datos');
   } catch (error) {
     console.error('Error al conectar a la base de datos', error);
-    // Detiene el arranque: sin BD no tiene sentido seguir (evita errores en cascada).
     throw error;
   }
 }

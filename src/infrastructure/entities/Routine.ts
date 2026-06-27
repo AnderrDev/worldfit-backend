@@ -1,43 +1,48 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToMany,
-  JoinTable,
+  CreateDateColumn,
   DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Exercise } from './Exercise';
+import { RoutineExercise } from './RoutineExercise';
 
-@Entity('routine')
+@Entity('routines')
 export class Routine {
   @PrimaryGeneratedColumn()
   id_routine!: number;
 
+  @Column({ type: 'integer' })
+  assigned_user_id!: number;
+
   @Column({ type: 'varchar', length: 255 })
   name_routine!: string;
 
-  @Column({ type: 'varchar', length: 500 })
+  @Column({ type: 'varchar', length: 500, default: '' })
   description!: string;
 
   @Column({ type: 'varchar', length: 50 })
   difficulty!: string;
 
-  // Relacion N:M con ejercicios. TypeORM crea la tabla intermedia
-  // routine_exercise (routine_id, exercise_id). eager: carga los
-  // ejercicios automaticamente al consultar la rutina.
-  @ManyToMany(() => Exercise, { eager: true })
-  @JoinTable({
-    name: 'routine_exercise',
-    joinColumn: { name: 'routine_id', referencedColumnName: 'id_routine' },
-    inverseJoinColumn: { name: 'exercise_id', referencedColumnName: 'id_exercise' },
-  })
-  exercises!: Exercise[];
+  @Column({ type: 'integer', default: 0 })
+  duration_minutes!: number;
 
-  @Column({ type: 'integer' })
-  assigned_user_id!: number;
+  @OneToMany(() => RoutineExercise, (re) => re.routine, { cascade: true })
+  routineExercises!: RoutineExercise[];
 
   @Column({ type: 'varchar', length: 20, default: 'pending' })
   assignment_status!: string;
+
+  @Column({ type: 'boolean', default: true })
+  is_active!: boolean;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;

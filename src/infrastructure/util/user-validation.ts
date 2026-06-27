@@ -4,7 +4,8 @@ export type UserData = {
   name: string;
   email: string;
   password: string;
-  role: string;
+  roleId: number;
+  isActive: boolean;
 };
 
 type ValidationUserData = {
@@ -32,8 +33,13 @@ export function validateUserData(data: any): ValidationUserData {
       'string.pattern.base': 'La contrasena debe incluir al menos una letra y un numero',
       'any.required': 'La contrasena es obligatoria',
     }),
-    role: Joi.string().valid('user', 'admin').default('user').messages({
-      'any.only': 'El rol debe ser "user" o "admin"',
+    roleId: Joi.number().integer().min(1).default(1).messages({
+      'number.base': 'El ID de rol debe ser un numero',
+      'number.integer': 'El ID de rol debe ser un numero entero',
+      'number.min': 'El ID de rol debe ser mayor a 0',
+    }),
+    isActive: Joi.boolean().default(true).messages({
+      'boolean.base': 'El estado debe ser verdadero o falso',
     }),
   });
 

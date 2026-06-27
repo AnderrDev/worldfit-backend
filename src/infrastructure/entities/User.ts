@@ -1,9 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Role } from './Role';
 
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id_user!: number;
+
+  @Column({ type: 'integer' })
+  role_id!: number;
+
+  @ManyToOne(() => Role, { eager: true })
+  @JoinColumn({ name: 'role_id' })
+  role!: Role;
 
   @Column({ type: 'varchar', length: 255 })
   name_user!: string;
@@ -14,11 +31,15 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password!: string;
 
-  @Column({ type: 'varchar', length: 20, default: 'user' })
-  role_user!: string;
+  @Column({ type: 'boolean', default: true })
+  is_active!: boolean;
 
-  // Borrado logico: si tiene fecha, el registro esta eliminado.
-  // TypeORM excluye automaticamente estos registros en las consultas.
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
+
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 }

@@ -1,10 +1,11 @@
-// Modelo de dominio (NO depende de TypeORM ni de Express).
-export type Role = 'user' | 'admin';
-
 export interface User {
   id: number;
+  roleId: number;
+  role?: string;
   name: string;
   email: string;
   password: string;
-  role: Role; // 'user' = normal, 'admin' = gestiona ejercicios y rutinas
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
